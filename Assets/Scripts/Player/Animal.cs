@@ -171,9 +171,10 @@ public class Animal : MonoBehaviour
         if (!CanMove() || !isplayer || GrassNum < 1) return;
         Debug.Log(name+"烟雾弹");
         GrassNum--;
-        Transform parent = (GameLoopManager.Inst != null && GameLoopManager.Inst.animalRoot != null)
-            ? GameLoopManager.Inst.animalRoot : null;
-        Instantiate(GrassPrefab, transform.position, quaternion.identity, parent);
+        //TODO
+        // Transform parent = (GameLoopManager.Inst != null && GameLoopManager.Inst.animalRoot != null)
+        //     ? GameLoopManager.Inst.animalRoot : null;
+        // Instantiate(GrassPrefab, transform.position, quaternion.identity, parent);
     }
 
     public virtual bool DoBehavior1()

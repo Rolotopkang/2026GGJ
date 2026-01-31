@@ -13,8 +13,9 @@ namespace Player
     {
 
         [Header("NPC 生成")]
-        [Tooltip("NPC 预制体")]
-        public GameObject NPCPrefab;
+        [Tooltip("NPC 预制体列表，生成时从中随机选择并尽量保证各类数量均衡")]
+        [FormerlySerializedAs("NPCPrefab")]
+        public GameObject[] NPCPrefabs;
 
         [Tooltip("生成数量")]
         [Min(1)]
@@ -229,9 +230,9 @@ namespace Player
         
         public void GenerateAnimals()
         {
-            if (NPCPrefab == null)
+            if (NPCPrefabs == null || NPCPrefabs.Length == 0)
             {
-                Debug.LogWarning("[GameLoopManager] NPCPrefab 未设置，无法生成。");
+                Debug.LogWarning("[GameLoopManager] NPCPrefabs 未设置或为空，无法生成。");
                 return;
             }
 
@@ -246,13 +247,16 @@ namespace Player
         private IEnumerator SpawnAnimalsCoroutine()
         {
             int npcCount = Mathf.Max(1, spawnCount);
-            int playerCount = (PlayerJoinManager.Inst != null && NPCPrefab != null) ? PlayerJoinManager.Inst.JoinedCount : 0;
+            int playerCount = (PlayerJoinManager.Inst != null && NPCPrefabs != null && NPCPrefabs.Length > 0) ? PlayerJoinManager.Inst.JoinedCount : 0;
             int totalCount = npcCount + playerCount;
 
             float halfW = spawnRegionSize.x * 0.5f;
             float halfH = spawnRegionSize.y * 0.5f;
             float minDistSq = minSpawnDistance * minSpawnDistance;
             var spawnedPositions = new List<Vector2>(totalCount);
+
+            // 各预制体已生成数量，用于均衡分布
+            int[] spawnCountPerPrefab = new int[NPCPrefabs.Length];
 
             // 混合顺序：NPC 与玩家槽位，然后打乱
             var schedule = new List<(bool isPlayer, int joystickIndex)>(totalCount);
@@ -281,9 +285,12 @@ namespace Player
                 Vector3 pos = new Vector3(pos2.x, pos2.y, 0f);
                 spawnedPositions.Add(pos2);
 
+                GameObject prefab = GetNPCPrefabWithBalancedDistribution(spawnCountPerPrefab);
+                if (prefab == null) continue;
+
                 if (schedule[i].isPlayer)
                 {
-                    GameObject go = Instantiate(NPCPrefab, pos, Quaternion.identity, animalRoot);
+                    GameObject go = Instantiate(prefab, pos, Quaternion.identity, animalRoot);
                     go.name = "Player_" + schedule[i].joystickIndex;
                     var multi = go.GetComponent<PlayerMovementMulti>();
                     if (multi == null)
@@ -293,7 +300,7 @@ namespace Player
                 }
                 else
                 {
-                    Instantiate(NPCPrefab, pos, Quaternion.identity, animalRoot);
+                    Instantiate(prefab, pos, Quaternion.identity, animalRoot);
                 }
             }
             _spawnCoroutine = null;
@@ -309,6 +316,41 @@ namespace Player
         {
             StartBanner.gameObject.SetActive(false);
             currentGameState = GameState.Starting;
+        }
+
+        /// <summary>
+        /// 从 NPCPrefabs 中选取一个预制体，优先选已生成数量较少的类型以保持均衡。
+        /// 会更新 spawnCountPerPrefab，调用方需传入同一个数组。
+        /// </summary>
+        private GameObject GetNPCPrefabWithBalancedDistribution(int[] spawnCountPerPrefab)
+        {
+            if (NPCPrefabs == null || NPCPrefabs.Length == 0 || spawnCountPerPrefab == null || spawnCountPerPrefab.Length != NPCPrefabs.Length)
+                return null;
+
+            int minCount = int.MaxValue;
+            var minIndices = new List<int>();
+
+            for (int i = 0; i < NPCPrefabs.Length; i++)
+            {
+                if (NPCPrefabs[i] == null) continue;
+                int c = spawnCountPerPrefab[i];
+                if (c < minCount)
+                {
+                    minCount = c;
+                    minIndices.Clear();
+                    minIndices.Add(i);
+                }
+                else if (c == minCount)
+                {
+                    minIndices.Add(i);
+                }
+            }
+
+            if (minIndices.Count == 0) return null;
+
+            int idx = minIndices[Random.Range(0, minIndices.Count)];
+            spawnCountPerPrefab[idx]++;
+            return NPCPrefabs[idx];
         }
 
         private Vector2 TryGetNonOverlapPosition(List<Vector2> existing, float halfW, float halfH, float minDistSq)
