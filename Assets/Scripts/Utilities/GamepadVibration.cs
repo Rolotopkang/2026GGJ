@@ -89,4 +89,19 @@ public static class GamepadVibration
         }
         return false;
     }
+
+    /// <summary>
+    /// 获取已加入手柄对应的 joystickIndex（1～4），未找到返回 0。
+    /// </summary>
+    public static int GetJoystickIndexByGamepad(Gamepad gamepad)
+    {
+        if (gamepad == null) return 0;
+        int id = gamepad.deviceId;
+        for (int i = 0; i < _joinedGamepads.Count; i++)
+        {
+            if (_joinedGamepads[i] != null && _joinedGamepads[i].deviceId == id)
+                return i + 1;
+        }
+        return 0;
+    }
 }
