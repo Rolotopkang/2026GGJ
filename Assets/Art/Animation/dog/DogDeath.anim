@@ -6,7 +6,7 @@ AnimationClip:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: Death
+  m_Name: DogDeath
   serializedVersion: 7
   m_Legacy: 0
   m_Compressed: 0
@@ -87,9 +87,9 @@ AnimationClip:
   - serializedVersion: 2
     curve:
     - time: 0
-      value: {fileID: 21300000, guid: 2ed0eea82ba0a374c9f713fdbeebec46, type: 3}
+      value: {fileID: 21300000, guid: 757253410c21d0f4297b68bdc3a64fab, type: 3}
     - time: 0.13333334
-      value: {fileID: 21300000, guid: 633ef2a51ecc19e449a95a1e23c66582, type: 3}
+      value: {fileID: 21300000, guid: cd6cebd33fd041443a8e7f273b98c2a2, type: 3}
     attribute: m_Sprite
     path: 
     classID: 212
@@ -139,8 +139,8 @@ AnimationClip:
       isIntCurve: 0
       isSerializeReferenceCurve: 0
     pptrCurveMapping:
-    - {fileID: 21300000, guid: 2ed0eea82ba0a374c9f713fdbeebec46, type: 3}
-    - {fileID: 21300000, guid: 633ef2a51ecc19e449a95a1e23c66582, type: 3}
+    - {fileID: 21300000, guid: 757253410c21d0f4297b68bdc3a64fab, type: 3}
+    - {fileID: 21300000, guid: cd6cebd33fd041443a8e7f273b98c2a2, type: 3}
   m_AnimationClipSettings:
     serializedVersion: 2
     m_AdditiveReferencePoseClip: {fileID: 0}
