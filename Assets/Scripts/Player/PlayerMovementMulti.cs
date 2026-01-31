@@ -12,11 +12,6 @@ public class PlayerMovementMulti : MonoBehaviour
     [Range(1, 4)]
     public int joystickIndex = 1;
 
-    [Header("移动设置")]
-    [Tooltip("移动速度（单位/秒）")]
-    [Range(1f, 20f)]
-    public float moveSpeed = 5f;
-
     [Tooltip("R2 视为按下的阈值（0～1）")]
     [Range(0.2f, 0.9f)]
     public float r2PressThreshold = 0.5f;
@@ -78,6 +73,24 @@ public class PlayerMovementMulti : MonoBehaviour
             _animal.UseGrassMagic();
         }
 
+        if (gamepad.buttonEast.wasPressedThisFrame)  // B / 圆圈
+        {
+            if (_animal.DoBehavior1())
+            {
+                GamepadVibration.Vibrate(joystickIndex, 0.5f, 0.5f);
+                _vibrateStopTime = Time.time + vibrationDuration;
+            }
+        }
+
+        if (gamepad.buttonNorth.wasPressedThisFrame)  // Y / 三角
+        {
+            if (_animal.DoBehavior2())
+            {
+                GamepadVibration.Vibrate(joystickIndex, 0.5f, 0.5f);
+                _vibrateStopTime = Time.time + vibrationDuration;
+            }
+        }
+
         if (_input.sqrMagnitude > 1f)
             _input.Normalize();
 
@@ -91,7 +104,7 @@ public class PlayerMovementMulti : MonoBehaviour
     private void FixedUpdate()
     {
         if (_rb != null)
-            _rb.velocity = _input * moveSpeed;
+            _rb.velocity = _input * _animal.moveSpeed;
     }
 
     private void OnDisable()
