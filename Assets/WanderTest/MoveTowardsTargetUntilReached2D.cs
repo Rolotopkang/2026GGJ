@@ -43,6 +43,8 @@ namespace WanderingCubes.BehaviorDesigner
         [Header("移动方式")]
         [UnityEngine.Tooltip("是否使用 Rigidbody2D 移动（需要物体有 Rigidbody2D 组件）")]
         public SharedBool useRigidbody2D = false;
+        [UnityEngine.Tooltip("Rigidbody2D 移动模式：true=velocity，false=MovePosition（更精确）")]
+        public SharedBool useVelocityMode = true;
 
         private Transform _transform;
         private Rigidbody2D _rb;
@@ -122,9 +124,18 @@ namespace WanderingCubes.BehaviorDesigner
 
             if (useRigidbody2D.Value && _rb != null)
             {
-                // 使用 Rigidbody2D velocity 移动
-                Vector2 direction = (target - current).normalized;
-                _rb.velocity = direction * speed.Value;
+                if (useVelocityMode.Value)
+                {
+                    // 使用 velocity 移动
+                    Vector2 direction = (target - current).normalized;
+                    _rb.velocity = direction * speed.Value;
+                }
+                else
+                {
+                    // 使用 MovePosition 移动（更精确，类似 Transform 移动）
+                    Vector2 nextPos = Vector2.MoveTowards(current, target, moveDelta);
+                    _rb.MovePosition(nextPos);
+                }
             }
             else
             {
@@ -161,14 +172,16 @@ namespace WanderingCubes.BehaviorDesigner
 
             float dist = Vector2.Distance(_transform.position, target);
             
-            // 调试日志
-            if (Time.frameCount % 30 == 0) // 每30帧输出一次，避免刷屏
+            // 检查是否到达目标
+            bool arrived = dist <= arrivalDistance.Value;
+            
+            // 如果使用 Rigidbody2D，到达时停止移动
+            if (useRigidbody2D.Value && _rb != null && arrived)
             {
-                //Debug.Log($"[Move] 当前位置={_transform.position}, 目标位置={target}, 距离={dist:F2}");
+                _rb.velocity = Vector2.zero;
             }
             
-            // 到达目标，输出日志
-            if (dist <= arrivalDistance.Value)
+            if (arrived)
             {
                 //Debug.Log($"[MoveTowardsTargetUntilReached2D] 到达目标，移动距离: {_totalTrailLength:F2}m");
                 return TaskStatus.Success;
