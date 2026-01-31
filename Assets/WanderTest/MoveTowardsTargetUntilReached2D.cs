@@ -128,7 +128,16 @@ namespace WanderingCubes.BehaviorDesigner
                 {
                     // 使用 velocity 移动
                     Vector2 direction = (target - current).normalized;
-                    _rb.velocity = direction * speed.Value;
+                    GameObject go = GetDefaultGameObject(targetGameObject.Value);
+                    if (go != null)
+                    {
+                        var movespeed = go.GetComponent<Animal>().moveSpeed;
+                        _rb.velocity = direction * movespeed;
+                    }
+                    else
+                    {
+                        _rb.velocity = direction * speed.Value;
+                    }
                 }
                 else
                 {

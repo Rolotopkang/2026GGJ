@@ -49,7 +49,7 @@ namespace WanderingCubes
                 CreateWanderCube(pos, i);
             }
 
-            Debug.Log($"WanderingCubesSpawner: 已生成 {cubeCount} 个方块。若仍看不到，请检查：1) 是否在运行 WanderingCubesScene；2) Game 视图是否选中该场景的 Camera；3) 若为 URP，是否已为方块指定/生成了可见材质。");
+            //Debug.Log($"WanderingCubesSpawner: 已生成 {cubeCount} 个方块。若仍看不到，请检查：1) 是否在运行 WanderingCubesScene；2) Game 视图是否选中该场景的 Camera；3) 若为 URP，是否已为方块指定/生成了可见材质。");
         }
 
         private void CreateWanderCube(Vector3 position, int index)
