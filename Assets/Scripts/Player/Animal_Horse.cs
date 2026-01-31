@@ -13,9 +13,6 @@ public class Animal_Horse : Animal
 
     public MMF_Player ShitMMF;
 
-    [Header(" Shit 设置")] [Tooltip("屎飞出的力（Impulse）")]
-    public float shitForce = 0.5f;
-
     [Tooltip("屎自动消失时间（秒），0 或负数表示不消失")] public float shitLifetime = 10f;
 
     [Header("冲刺冲量检测")] [Tooltip("冲刺检测中心偏移（相对于自身位置）")]
@@ -31,46 +28,12 @@ public class Animal_Horse : Animal
 
     public override bool DoBehavior1()
     {
-        if (!base.DoBehavior1()) return false;
-        ShitMMF?.PlayFeedbacks();
-
-        // 如果设置了自动消失时间，安排销毁
-        if (shitLifetime > 0)
-        {
-            StartCoroutine(DestroyShitAfterDelay(shitLifetime));
-        }
-
-        return true;
-    }
-
-    private System.Collections.IEnumerator DestroyShitAfterDelay(float delay)
-    {
-        // 等待 ShitMMF 播放完毕后再计时
-        yield return new WaitForSeconds(0.5f);
-        yield return new WaitForSeconds(delay - 0.5f);
-
-        // 找到并销毁最近生成的 Shit
-        var shits = GameObject.FindGameObjectsWithTag("Shit");
-        foreach (var shit in shits)
-        {
-            // 只销毁马生成的、还在生命周期内的 Shit
-            if (shit.name.Contains("Shit") && Vector2.Distance(shit.transform.position, transform.position) < 5f)
-            {
-                Destroy(shit);
-                break;
-            }
-        }
-    }
-
-    public override bool DoBehavior2()
-    {
         if (!CanMove()) return false;
         if (behavior2CD > 0f && Time.time - _lastBehavior2Time < behavior2CD) return false;
         _lastBehavior2Time = Time.time;
 
         // 开始冲刺
         StartDash();
-
         return true;
     }
 
@@ -78,12 +41,10 @@ public class Animal_Horse : Animal
     {
         if (_isDashing) return;
         _isDashing = true;
-
-        // 获取冲刺方向（基于当前朝向）
+        
         float facing = (animalSprite != null && animalSprite.flipX) ? -1f : 1f;
         _dashDirection = new Vector2(facing, 0f).normalized;
-
-        // 播放冲刺动画
+        
         if (_animator != null)
             _animator.SetTrigger("Kick"); // 复用攻击动画
 
@@ -153,7 +114,6 @@ public class Animal_Horse : Animal
                 }
 
                 otherRb.AddForce(_dashDirection * dashImpulseForce, ForceMode2D.Impulse);
-                Debug.Log($"冲刺撞到 {col.gameObject.name}，施加冲量: {_dashDirection * dashImpulseForce}");
             }
         }
     }

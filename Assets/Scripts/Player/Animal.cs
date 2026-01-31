@@ -14,6 +14,7 @@ public class Animal : MonoBehaviour
     public SpriteRenderer animalSprite;
     public Animator _animator;
 
+    [Header("烟雾弹")]
     public GameObject GrassPrefab;
     public int GrassNum = 1;
 

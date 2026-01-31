@@ -546,7 +546,7 @@ CircleCollider2D:
   m_Material: {fileID: 0}
   m_IncludeLayers:
     serializedVersion: 2
-    m_Bits: 65
+    m_Bits: 192
   m_ExcludeLayers:
     serializedVersion: 2
     m_Bits: 1
@@ -696,8 +696,8 @@ MonoBehaviour:
   hitRangeOffset: -0.65
   hitRangeRadius: 0.48
   attackCD: 5
-  behavior1CD: 0
-  behavior2CD: 0
+  behavior1CD: 2
+  behavior2CD: 1
   _lastAttackTime: -3.4028235e+38
   _lastBehavior1Time: -3.4028235e+38
   _lastBehavior2Time: -3.4028235e+38
@@ -705,6 +705,7 @@ MonoBehaviour:
   _isDead: 0
   shitPrefab: {fileID: 3470182767891373627, guid: 2613e783ac67d3943a3373896af27964, type: 3}
   ShitMMF: {fileID: 3682486006131141075}
+  BarkScore: 4
 --- !u!114 &-1337287484782630408
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -5729,7 +5730,7 @@ Transform:
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 0.63, y: 0.63, z: 0.63}
+  m_LocalScale: {x: 0.5, y: 0.5, z: 0.5}
   m_ConstrainProportionsScale: 1
   m_Children:
   - {fileID: 1254172892075510884}

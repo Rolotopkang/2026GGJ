@@ -109,14 +109,14 @@ public class PlayerMovementMulti : MonoBehaviour
                 }
             }
 
-            if (gamepad.buttonNorth.wasPressedThisFrame)  // Y / 三角
-            {
-                if (_animal.DoBehavior2())
-                {
-                    GamepadVibration.Vibrate(joystickIndex, 0.5f, 0.5f);
-                    _vibrateStopTime = Time.time + vibrationDuration;
-                }
-            }
+            // if (gamepad.buttonNorth.wasPressedThisFrame)  // Y / 三角
+            // {
+            //     if (_animal.DoBehavior2())
+            //     {
+            //         GamepadVibration.Vibrate(joystickIndex, 0.5f, 0.5f);
+            //         _vibrateStopTime = Time.time + vibrationDuration;
+            //     }
+            // }
         }
     }
 

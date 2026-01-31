@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using MoreMountains.Feedbacks;
+using Player;
 using UnityEngine;
 using UnityEngine.Serialization;
 
@@ -13,12 +14,18 @@ public class Animal_Dog : Animal
     
     public GameObject shitPrefab;
     public MMF_Player ShitMMF;
+    public int BarkScore = 2;
+    public int PickShitScore = 5;
 
     public override bool DoBehavior1()
     {
         //叫
         if (!base.DoBehavior1()) return false;
         ShitMMF?.PlayFeedbacks();
+        if (isplayer)
+        {
+            GameLoopManager.Inst.AddScore(GetComponent<PlayerMovementMulti>().joystickIndex,BarkScore);
+        }
 
         return true;
     }
@@ -50,8 +57,11 @@ public class Animal_Dog : Animal
         if (other.gameObject.layer == LayerMask.NameToLayer("Shit"))
         {
             var shitins = other.gameObject;
+            if (isplayer)
+            {
+                GameLoopManager.Inst.AddScore(GetComponent<PlayerMovementMulti>().joystickIndex,PickShitScore);
+            }
             Destroy(shitins);
-            Debug.Log($"捡到屎了");
         }
     }
 

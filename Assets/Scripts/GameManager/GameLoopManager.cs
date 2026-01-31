@@ -71,6 +71,8 @@ namespace Player
         public MMF_Player StartBanner;
         
         public GameObject EndBanner;
+
+        public GameObject GameMap;
         
         private readonly List<GameObject> _spawnedPlayers = new List<GameObject>();
 
@@ -101,6 +103,7 @@ namespace Player
         private void Start()
         {
             StartBanner.gameObject.SetActive(false);
+            GameMap.SetActive(false);
         }
 
         private void Update()
@@ -112,7 +115,13 @@ namespace Player
                 if (Keyboard.current[Key.Space].wasPressedThisFrame)
                 {
                     TransitionToWaitStart();
-                    TransitionController.Inst.PlayBlackTransition(0.3f,()=> PlayerJoinUI.Inst.transform.gameObject.SetActive(false),OnTransitionDown);
+                    TransitionController.Inst.PlayBlackTransition(0.3f,
+                        () =>
+                        {
+                            PlayerJoinUI.Inst.transform.gameObject.SetActive(false);
+                            GameMap.SetActive(true);
+                        }
+                    ,OnTransitionDown);
                 }
             }
 
@@ -511,6 +520,7 @@ namespace Player
                         PlayerJoinUI.Inst.ResetToPickState();
                         PlayerJoinUI.Inst.gameObject.SetActive(true);
                     }
+                    GameMap.SetActive(false);
                 },
                 () =>
                 {
