@@ -16,7 +16,7 @@ public class Animal_Sheep : Animal
 
     public override bool DoBehavior1()
     {
-        /*if (!base.DoBehavior1()) return false;
+        if (!base.DoBehavior1()) return false;
         ShitMMF?.PlayFeedbacks();
         Vector3 spawnPos;
         Vector2 awayDir;
@@ -41,8 +41,6 @@ public class Animal_Sheep : Animal
         {
             GameLoopManager.Inst.AddScore(GetComponent<PlayerMovementMulti>().joystickIndex,ShitScore);
         }
-
-        return true;*/
 
         return true;
     }
