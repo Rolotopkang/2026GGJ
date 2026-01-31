@@ -88,7 +88,6 @@ namespace WanderingCubes.BehaviorDesigner
             // 检查是否需要距离限制
             bool needDistanceLimit = minTargetDistance.Value > 0f || maxTargetDistance.Value > 0f;
             Vector2 finalPosition = Vector2.zero;
-            bool foundValidPosition = false;
 
             // 尝试生成符合距离要求的位置
             /*int maxAttempts = needDistanceLimit ? maxRetryAttempts.Value : 1;

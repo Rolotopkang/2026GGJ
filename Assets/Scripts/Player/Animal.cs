@@ -78,7 +78,7 @@ public class Animal : MonoBehaviour
 
     public virtual bool DoBehavior1()
     {
-        if (!isplayer) return false;
+        //if (!isplayer) return false;
         if (behavior1CD > 0f && Time.time - _lastBehavior1Time < behavior1CD) return false;
         _lastBehavior1Time = Time.time;
         Debug.Log(name+"行为1");

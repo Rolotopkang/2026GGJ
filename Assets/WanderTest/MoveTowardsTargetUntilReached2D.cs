@@ -40,14 +40,7 @@ namespace WanderingCubes.BehaviorDesigner
         [UnityEngine.Tooltip("长度标签颜色")]
         public UnityEngine.Color labelColor = UnityEngine.Color.white;
 
-        [Header("移动方式")]
-        [UnityEngine.Tooltip("是否使用 Rigidbody2D 移动（需要物体有 Rigidbody2D 组件）")]
-        public SharedBool useRigidbody2D = false;
-        [UnityEngine.Tooltip("Rigidbody2D 移动模式：true=velocity，false=MovePosition（更精确）")]
-        public SharedBool useVelocityMode = true;
-
         private Transform _transform;
-        private Rigidbody2D _rb;
         private LineRenderer _lineRenderer;
         private TextMesh _lengthLabel;
         private float _totalTrailLength;
@@ -63,22 +56,6 @@ namespace WanderingCubes.BehaviorDesigner
             _totalTrailLength = 0;
             GameObject go = GetDefaultGameObject(targetGameObject.Value);
             _transform = go != null ? go.transform : null;
-
-            // 获取 Rigidbody2D 组件
-            if (useRigidbody2D.Value && go != null)
-            {
-                _rb = go.GetComponent<Rigidbody2D>();
-                if (_rb == null)
-                {
-                    _rb = go.AddComponent<Rigidbody2D>();
-                    _rb.gravityScale = 0f;
-                    _rb.constraints = RigidbodyConstraints2D.FreezeRotation;
-                }
-            }
-            else
-            {
-                _rb = null;
-            }
 
             // 获取生成区域边界
             if (Player.GameLoopManager.Inst != null)
@@ -121,27 +98,7 @@ namespace WanderingCubes.BehaviorDesigner
             }*/
 
             float moveDelta = speed.Value * Time.deltaTime;
-
-            if (useRigidbody2D.Value && _rb != null)
-            {
-                if (useVelocityMode.Value)
-                {
-                    // 使用 velocity 移动
-                    Vector2 direction = (target - current).normalized;
-                    _rb.velocity = direction * speed.Value;
-                }
-                else
-                {
-                    // 使用 MovePosition 移动（更精确，类似 Transform 移动）
-                    Vector2 nextPos = Vector2.MoveTowards(current, target, moveDelta);
-                    _rb.MovePosition(nextPos);
-                }
-            }
-            else
-            {
-                // 使用原来的 Transform 移动
-                _transform.position = Vector2.MoveTowards(current, target, moveDelta);
-            }
+            _transform.position = Vector2.MoveTowards(current, target, moveDelta);
 
             // 计算移动距离并更新
             float segmentLength = Vector3.Distance(_lastPosition, _transform.position);
@@ -172,16 +129,14 @@ namespace WanderingCubes.BehaviorDesigner
 
             float dist = Vector2.Distance(_transform.position, target);
             
-            // 检查是否到达目标
-            bool arrived = dist <= arrivalDistance.Value;
-            
-            // 如果使用 Rigidbody2D，到达时停止移动
-            if (useRigidbody2D.Value && _rb != null && arrived)
+            // 调试日志
+            if (Time.frameCount % 30 == 0) // 每30帧输出一次，避免刷屏
             {
-                _rb.velocity = Vector2.zero;
+                //Debug.Log($"[Move] 当前位置={_transform.position}, 目标位置={target}, 距离={dist:F2}");
             }
             
-            if (arrived)
+            // 到达目标，输出日志
+            if (dist <= arrivalDistance.Value)
             {
                 //Debug.Log($"[MoveTowardsTargetUntilReached2D] 到达目标，移动距离: {_totalTrailLength:F2}m");
                 return TaskStatus.Success;
