@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using BehaviorDesigner.Runtime;
 using Player;
 using Tools;
 using Unity.Mathematics;
@@ -21,15 +22,25 @@ public class Animal : MonoBehaviour
     [Range(1f, 20f)]
     public float moveSpeed = 5f;
 
+    [Header("攻击判定")]
+    [Tooltip("正前方检测中心偏移（相对于自身位置）")]
+    public float hitRangeOffset = 0.5f;
+    [Tooltip("检测范围半径")]
+    public float hitRangeRadius = 0.4f;
+
     [Header("行为冷却")]
+    [Tooltip("攻击冷却时长（秒），0 则无冷却")]
+    public float attackCD = 5f;
     [Tooltip("行为1冷却时长（秒），0 则无冷却")]
     public float behavior1CD = 0f;
     [Tooltip("行为2冷却时长（秒），0 则无冷却")]
     public float behavior2CD = 0f;
 
+    private float _lastAttackTime = float.MinValue;
     private float _lastBehavior1Time = float.MinValue;
     private float _lastBehavior2Time = float.MinValue;
     private Rigidbody2D _rb;
+    protected bool _isDead;
 
     private static readonly int WalkingId = Animator.StringToHash("Walking");
 
@@ -41,6 +52,7 @@ public class Animal : MonoBehaviour
 
     private void LateUpdate()
     {
+        if (_isDead) return;
         UpdateFacingFromVelocity();
         UpdateWalkingState();
     }
@@ -63,17 +75,59 @@ public class Animal : MonoBehaviour
         else if (vx < -0.01f) animalSprite.flipX = false;
     }
     
-    //ondeath
     public virtual void Death()
     {
-        
+        if (_isDead) return;
+        _isDead = true;
+
+        // 停止物理移动
+        if (_rb != null)
+            _rb.velocity = Vector2.zero;
+
+        // 禁用玩家输入（若有 PlayerMovementMulti）
+        var movement = GetComponent<PlayerMovementMulti>();
+        if (movement != null)
+            movement.enabled = false;
+
+        // 禁用 NPC AI（若有 BehaviorTree）
+        var bt = GetComponent<BehaviorTree>();
+        if (bt != null)
+            bt.enabled = false;
+
+        // 禁用碰撞体，尸体不再参与碰撞
+        foreach (var col in GetComponentsInChildren<Collider2D>())
+            col.enabled = false;
+
+        if (_animator != null)
+            _animator.SetTrigger("Death");
     }
-    //attack
-    public virtual void Attack()
+
+    public virtual bool Attack()
     {
-        if (isplayer)
+        if (attackCD > 0f && Time.time - _lastAttackTime < attackCD) return false;
+        _lastAttackTime = Time.time;
+        if (_animator != null)
+            _animator.SetTrigger("Attack");
+        return true;
+    }
+
+    /// <summary>
+    /// 动画事件可调用。检测正前方范围内的其他 Animal 并触发其 Death()。仅当自身未死亡时有效。
+    /// </summary>
+    public void HitCheck()
+    {
+        if (_isDead) return;
+
+        float facing = (animalSprite != null && animalSprite.flipX) ? -1f : 1f;
+        Vector2 center = (Vector2)transform.position + Vector2.right * (facing * hitRangeOffset);
+
+        var hits = Physics2D.OverlapCircleAll(center, hitRangeRadius);
+        foreach (var col in hits)
         {
-            Debug.Log(name+"攻击");
+            if (col == null || col.gameObject == gameObject) continue;
+            var other = col.GetComponent<Animal>();
+            if (other != null && other != this && !other._isDead)
+                other.Death();
         }
     }
     
@@ -106,4 +160,16 @@ public class Animal : MonoBehaviour
     }
 
     private bool GetGameStatue() => GameLoopManager.Inst.isGameStart;
+
+#if UNITY_EDITOR
+    private void OnDrawGizmosSelected()
+    {
+        float facing = (animalSprite != null && animalSprite.flipX) ? -1f : 1f;
+        Vector3 center = transform.position + Vector3.right * (facing * hitRangeOffset);
+        Gizmos.color = new Color(1f, 0.3f, 0.3f, 0.5f);
+        Gizmos.DrawWireSphere(center, hitRangeRadius);
+        Gizmos.color = new Color(1f, 0.3f, 0.3f, 0.15f);
+        Gizmos.DrawSphere(center, hitRangeRadius);
+    }
+#endif
 }
