@@ -81,6 +81,10 @@ namespace WanderingCubes.BehaviorDesigner
                 component = owner.GetComponent<Transform>();
             else if (compName == "animal_sheep")
                 component = owner.GetComponent<Animal_Sheep>();
+            else if (compName == "animal_dog")
+                component = owner.GetComponent<Animal_Dog>();
+            else if (compName == "animal_horse")
+                component = owner.GetComponent<Animal_Horse>();
             else
             {
                 var components = owner.GetComponents<Component>();
