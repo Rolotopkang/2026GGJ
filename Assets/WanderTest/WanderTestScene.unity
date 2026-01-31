@@ -170,6 +170,7 @@ MonoBehaviour:
   cubeCount: 12
   spawnHalfExtents: {x: 4, y: 0, z: 4}
   cubeScale: {x: 1, y: 1, z: 1}
+  cubePrefab: {fileID: 358465220907450538, guid: f71013dbd3166024b80031f1c73a401c, type: 3}
   cubeMaterial: {fileID: 2110093186395255282, guid: 10f1060b18f7ba34f92053a256e89d10, type: 3}
 --- !u!1 &1068144000
 GameObject:

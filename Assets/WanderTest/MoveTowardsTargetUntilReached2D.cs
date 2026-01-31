@@ -40,7 +40,12 @@ namespace WanderingCubes.BehaviorDesigner
         [UnityEngine.Tooltip("长度标签颜色")]
         public UnityEngine.Color labelColor = UnityEngine.Color.white;
 
+        [Header("移动方式")]
+        [UnityEngine.Tooltip("是否使用 Rigidbody2D 移动（需要物体有 Rigidbody2D 组件）")]
+        public SharedBool useRigidbody2D = false;
+
         private Transform _transform;
+        private Rigidbody2D _rb;
         private LineRenderer _lineRenderer;
         private TextMesh _lengthLabel;
         private float _totalTrailLength;
@@ -56,6 +61,22 @@ namespace WanderingCubes.BehaviorDesigner
             _totalTrailLength = 0;
             GameObject go = GetDefaultGameObject(targetGameObject.Value);
             _transform = go != null ? go.transform : null;
+
+            // 获取 Rigidbody2D 组件
+            if (useRigidbody2D.Value && go != null)
+            {
+                _rb = go.GetComponent<Rigidbody2D>();
+                if (_rb == null)
+                {
+                    _rb = go.AddComponent<Rigidbody2D>();
+                    _rb.gravityScale = 0f;
+                    _rb.constraints = RigidbodyConstraints2D.FreezeRotation;
+                }
+            }
+            else
+            {
+                _rb = null;
+            }
 
             // 获取生成区域边界
             if (Player.GameLoopManager.Inst != null)
@@ -98,7 +119,18 @@ namespace WanderingCubes.BehaviorDesigner
             }*/
 
             float moveDelta = speed.Value * Time.deltaTime;
-            _transform.position = Vector2.MoveTowards(current, target, moveDelta);
+
+            if (useRigidbody2D.Value && _rb != null)
+            {
+                // 使用 Rigidbody2D velocity 移动
+                Vector2 direction = (target - current).normalized;
+                _rb.velocity = direction * speed.Value;
+            }
+            else
+            {
+                // 使用原来的 Transform 移动
+                _transform.position = Vector2.MoveTowards(current, target, moveDelta);
+            }
 
             // 计算移动距离并更新
             float segmentLength = Vector3.Distance(_lastPosition, _transform.position);

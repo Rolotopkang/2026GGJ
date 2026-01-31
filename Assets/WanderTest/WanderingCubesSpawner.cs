@@ -14,12 +14,16 @@ namespace WanderingCubes
         public ExternalBehaviorTree behaviorTree;
 
         [Header("生成设置")]
-        [Tooltip("方块数量")]
+        [Tooltip("方块/预制体数量")]
         public int cubeCount = 12;
         [Tooltip("生成范围（中心为 Spawner 的 position，半尺寸）")]
         public Vector3 spawnHalfExtents = new Vector3(4f, 0f, 4f);
         [Tooltip("方块统一缩放")]
         public Vector3 cubeScale = Vector3.one;
+
+        [Header("预制体设置")]
+        [Tooltip("要生成的预制体。如果为空，则使用默认的方块（GameObject.CreatePrimitive）")]
+        public GameObject cubePrefab;
 
         [Header("可选：方块材质（URP 下留空则自动用 URP Lit 生成）")]
         public Material cubeMaterial;
@@ -50,25 +54,41 @@ namespace WanderingCubes
 
         private void CreateWanderCube(Vector3 position, int index)
         {
-            GameObject cube = GameObject.CreatePrimitive(PrimitiveType.Cube);
-            cube.name = $"WanderCube_{index + 1}";
-            cube.transform.SetParent(transform);
-            cube.transform.position = position;
-            cube.transform.localScale = cubeScale;
+            GameObject cube;
 
-            // URP 下 CreatePrimitive 的默认材质可能不显示，改为使用指定材质或 URP Lit
-            var renderer = cube.GetComponent<Renderer>();
-            if (renderer != null)
+            if (cubePrefab != null)
             {
-                if (cubeMaterial != null)
-                    renderer.sharedMaterial = cubeMaterial;
-                else
-                    renderer.sharedMaterial = GetOrCreateURPMaterial();
+                // 使用指定的预制体生成
+                cube = Instantiate(cubePrefab, position, Quaternion.identity, transform);
+                cube.name = $"WanderCube_{index + 1}";
+            }
+            else
+            {
+                // 使用默认方块
+                cube = GameObject.CreatePrimitive(PrimitiveType.Cube);
+                cube.name = $"WanderCube_{index + 1}";
+                cube.transform.SetParent(transform);
+                cube.transform.position = position;
+                cube.transform.localScale = cubeScale;
+
+                // URP 下 CreatePrimitive 的默认材质可能不显示，改为使用指定材质或 URP Lit
+                var renderer = cube.GetComponent<Renderer>();
+                if (renderer != null)
+                {
+                    if (cubeMaterial != null)
+                        renderer.sharedMaterial = cubeMaterial;
+                    else
+                        renderer.sharedMaterial = GetOrCreateURPMaterial();
+                }
             }
 
-            var tree = cube.AddComponent<BehaviorTree>();
-            tree.ExternalBehavior = behaviorTree;
-            tree.EnableBehavior();
+            // 如果预制体没有 BehaviorTree 组件，添加它
+            if (cube.GetComponent<BehaviorTree>() == null)
+            {
+                var tree = cube.AddComponent<BehaviorTree>();
+                tree.ExternalBehavior = behaviorTree;
+                tree.EnableBehavior();
+            }
         }
 
         private static Material GetOrCreateURPMaterial()

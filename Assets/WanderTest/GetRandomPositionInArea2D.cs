@@ -1,21 +1,15 @@
+using System;
 using UnityEngine;
 using BehaviorDesigner.Runtime;
 using BehaviorDesigner.Runtime.Tasks;
 using Player;
-
+using Tools;
+using Action = BehaviorDesigner.Runtime.Tasks.Action;
+using Random = UnityEngine.Random;
 
 
 namespace WanderingCubes.BehaviorDesigner
 {
-    public enum AnimalType
-    {
-        Sheip,
-        Monkey,
-        Horse
-    }
-
-   
-    
     /// <summary>
     /// 在指定 2D 区域内随机生成一个点，写入 SharedVector2。
     /// 用于 2D 漫游：目标位置 = center + [-halfExtents, +halfExtents] 的随机偏移。
@@ -44,18 +38,20 @@ namespace WanderingCubes.BehaviorDesigner
         [UnityEngine.Tooltip("最大尝试次数（避免无限循环）")]
         [UnityEngine.Range(1, 100)]
         public SharedInt maxRetryAttempts = 20;
+
+        public EnumTool.AnimalType SelfAnimalType;
         
         // 为每个枚举值提供对应的 Vector2 值
-        public Vector2 GetLimitPos(AnimalType area)
+        public Vector2 GetLimitPos(EnumTool.AnimalType area)
         {
             switch (area)
             {
-                case AnimalType.Sheip:
+                case EnumTool.AnimalType.Sheep:
                     return new Vector2(2, 3);
-                case AnimalType.Monkey:
+                case EnumTool.AnimalType.Dog:
                     return new Vector2(4, 5);
-                case AnimalType.Horse:
-                    return new Vector2(1, 2);
+                case EnumTool.AnimalType.House:
+                    return new Vector2(5, 6);
                 default:
                     return new Vector2(1, 2);
             }
@@ -128,11 +124,18 @@ namespace WanderingCubes.BehaviorDesigner
                 }
             }*/
 
+            var SelfAnimalScript = GetDefaultGameObject(null)?.GetComponent<Animal>();
+            if (SelfAnimalScript != null)
+            {
+                SelfAnimalType = SelfAnimalScript.animalType;
+            }
+            Vector2 MoveDisLimit = GetLimitPos(SelfAnimalType);
+            
             var randompos = GetRandomPointWithDistanceLimit(
                 currentPos,
                 GameLoopManager.Inst.spawnRegionCenter,
                 GameLoopManager.Inst.spawnRegionSize * 0.5f,
-                1,2);
+                MoveDisLimit.x,MoveDisLimit.y);
             
                 /*storeResult.Value = GetRandomPointInRectangleWithMaxDistance(
                     currentPos,
