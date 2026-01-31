@@ -12,11 +12,11 @@ GameObject:
   - component: {fileID: 8822524691567185138}
   - component: {fileID: 8820164682154900567}
   - component: {fileID: 4119214821570411004}
-  - component: {fileID: -8617615608198198525}
   - component: {fileID: 2584676971244189506}
+  - component: {fileID: 7673769750954002241}
   - component: {fileID: -1337287484782630408}
   m_Layer: 0
-  m_Name: "\u827E\u96C5\u6CD5\u62C9"
+  m_Name: "\u8D64\u5154"
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -597,33 +597,6 @@ Rigidbody2D:
   m_SleepingMode: 1
   m_CollisionDetection: 1
   m_Constraints: 4
---- !u!114 &-8617615608198198525
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 358465220907450538}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 53fe6a6eaa4c47d449d3b1cbafa4718c, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  isplayer: 0
-  animalType: 0
-  animalSprite: {fileID: 9016415337399201336}
-  GrassPrefab: {fileID: 0}
-  GrassNum: 1
-  moveSpeed: 5
-  hitRangeOffset: -0.52
-  hitRangeRadius: 0.47
-  attackCD: 5
-  behavior1CD: 2
-  behavior2CD: 2
-  shitPoint: {fileID: 5532111783925551983}
-  shitPrefab: {fileID: 3470182767891373627, guid: 2613e783ac67d3943a3373896af27964, type: 3}
-  ShitMMF: {fileID: 3682486006131141075}
-  shitForce: 0.5
 --- !u!114 &2584676971244189506
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -702,6 +675,33 @@ MonoBehaviour:
     m_PostInfinity: 2
     m_RotationOrder: 4
   StartShakingButton: 0
+--- !u!114 &7673769750954002241
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 358465220907450538}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 14b71d322645de842b03a0ba407e0bf3, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  isplayer: 0
+  animalType: 2
+  animalSprite: {fileID: 9016415337399201336}
+  GrassPrefab: {fileID: 0}
+  GrassNum: 1
+  moveSpeed: 5
+  hitRangeOffset: 0.5
+  hitRangeRadius: 0.4
+  attackCD: 5
+  behavior1CD: 0
+  behavior2CD: 0
+  shitPoint: {fileID: 0}
+  shitPrefab: {fileID: 0}
+  ShitMMF: {fileID: 0}
+  shitForce: 0.5
 --- !u!114 &-1337287484782630408
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -721,7 +721,7 @@ MonoBehaviour:
   logTaskChanges: 0
   group: 0
   resetValuesOnRestart: 0
-  externalBehavior: {fileID: 11400000, guid: 68c48278224bbf643b090e1b1f5c00bf, type: 2}
+  externalBehavior: {fileID: 11400000, guid: 1cc1244b4652c1b4bacf3091cbf01d97, type: 2}
   mBehaviorSource:
     behaviorName: Behavior
     behaviorDescription: 
@@ -730,7 +730,7 @@ MonoBehaviour:
       parentIndex: 
       startIndex: 
       variableStartIndex: 
-      JSONSerialization: '{"Variables":[{"Type":"BehaviorDesigner.Runtime.SharedVector2","Name":"TargetPos","IsShared":true,"Vector2mValue":"(0,0)"}]}'
+      JSONSerialization: 
       fieldSerializationData:
         typeName: []
         fieldNameHash: 
@@ -739,7 +739,7 @@ MonoBehaviour:
         unityObjects: []
         byteData: 
         byteDataArray: 
-      Version: 1.7.12
+      Version: 
   gizmoViewMode: 2
   showBehaviorDesignerGizmo: 1
 --- !u!1 &490960616198364041
@@ -5807,7 +5807,7 @@ SpriteRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
-  m_Sprite: {fileID: 21300000, guid: 757253410c21d0f4297b68bdc3a64fab, type: 3}
+  m_Sprite: {fileID: 21300000, guid: 2ed0eea82ba0a374c9f713fdbeebec46, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
@@ -5828,7 +5828,7 @@ Animator:
   m_GameObject: {fileID: 3151455842970805330}
   m_Enabled: 1
   m_Avatar: {fileID: 0}
-  m_Controller: {fileID: 9100000, guid: f26edb225fa9ca24eb9a68dfebea8fce, type: 2}
+  m_Controller: {fileID: 9100000, guid: c90e0f7a859dad34b8c617415a996b87, type: 2}
   m_CullingMode: 0
   m_UpdateMode: 0
   m_ApplyRootMotion: 0
