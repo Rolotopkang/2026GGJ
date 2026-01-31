@@ -28,6 +28,9 @@ namespace WanderingCubes.BehaviorDesigner
     [TaskDescription("调用物体上的指定方法（支持按权重随机执行）")]
     public class CallMethod : Action
     {
+        [UnityEngine.Tooltip("是否使用权重随机模式（关闭则按顺序执行第一个方法）")]
+        public int RandomNumber = 0;
+        
         [UnityEngine.Tooltip("要调用的组件名称（如 Animal, PlayerMovementMulti）")]
         public SharedString componentName;
 
@@ -38,8 +41,20 @@ namespace WanderingCubes.BehaviorDesigner
         [UnityEngine.Tooltip("是否使用权重随机模式（关闭则按顺序执行第一个方法）")]
         public bool useWeightedRandom = true;
 
+        public int RandomStart = 0;
+
+        public override void OnStart()
+        {
+            RandomStart = Random.Range(0, 10);
+        }
+
         public override TaskStatus OnUpdate()
         {
+            if (RandomStart >= RandomNumber)
+            {
+                return TaskStatus.Success;
+            }
+            
             GameObject owner = GetDefaultGameObject(null);
             if (owner == null)
             {
