@@ -122,6 +122,67 @@ NavMeshSettings:
     debug:
       m_Flags: 0
   m_NavMeshData: {fileID: 0}
+--- !u!1001 &13724624
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    serializedVersion: 3
+    m_TransformParent: {fileID: 0}
+    m_Modifications:
+    - target: {fileID: 358465220907450538, guid: f71013dbd3166024b80031f1c73a401c, type: 3}
+      propertyPath: m_Name
+      value: "\u827E\u96C5\u6CD5\u62C9"
+      objectReference: {fileID: 0}
+    - target: {fileID: 358465220907450538, guid: f71013dbd3166024b80031f1c73a401c, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3630433582433113577, guid: f71013dbd3166024b80031f1c73a401c, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 3.1783655
+      objectReference: {fileID: 0}
+    - target: {fileID: 3630433582433113577, guid: f71013dbd3166024b80031f1c73a401c, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 0.734252
+      objectReference: {fileID: 0}
+    - target: {fileID: 3630433582433113577, guid: f71013dbd3166024b80031f1c73a401c, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3630433582433113577, guid: f71013dbd3166024b80031f1c73a401c, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 3630433582433113577, guid: f71013dbd3166024b80031f1c73a401c, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3630433582433113577, guid: f71013dbd3166024b80031f1c73a401c, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3630433582433113577, guid: f71013dbd3166024b80031f1c73a401c, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3630433582433113577, guid: f71013dbd3166024b80031f1c73a401c, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3630433582433113577, guid: f71013dbd3166024b80031f1c73a401c, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3630433582433113577, guid: f71013dbd3166024b80031f1c73a401c, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: f71013dbd3166024b80031f1c73a401c, type: 3}
 --- !u!1 &25339562
 GameObject:
   m_ObjectHideFlags: 0
@@ -1277,7 +1338,7 @@ MonoBehaviour:
           ButtonText: 
         Owner: {fileID: 439593418}
         DebugActive: 0
-        TargetShaker: {fileID: 0}
+        TargetShaker: {fileID: 439593420}
         Duration: 0.3
         ResetShakerValuesAfterShake: 1
         ResetTargetValuesAfterShake: 1
@@ -2741,7 +2802,7 @@ MonoBehaviour:
           ButtonText: 
         Owner: {fileID: 607247219}
         DebugActive: 0
-        TargetShaker: {fileID: 0}
+        TargetShaker: {fileID: 607247218}
         Duration: 0.3
         ResetShakerValuesAfterShake: 1
         ResetTargetValuesAfterShake: 1
@@ -5562,7 +5623,7 @@ MonoBehaviour:
           ButtonText: 
         Owner: {fileID: 1772191609}
         DebugActive: 0
-        TargetShaker: {fileID: 0}
+        TargetShaker: {fileID: 1772191608}
         Duration: 0.3
         ResetShakerValuesAfterShake: 1
         ResetTargetValuesAfterShake: 1
@@ -6909,7 +6970,7 @@ MonoBehaviour:
           ButtonText: 
         Owner: {fileID: 1885911305}
         DebugActive: 0
-        TargetShaker: {fileID: 0}
+        TargetShaker: {fileID: 1885911304}
         Duration: 0.3
         ResetShakerValuesAfterShake: 1
         ResetTargetValuesAfterShake: 1
@@ -7093,7 +7154,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fe2b0d80e378a1349a5405343e29e3ba, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  playerPrefab: {fileID: 358465220907450538, guid: 292f846d10d91984fa2913e9655faae2, type: 3}
+  playerPrefab: {fileID: 358465220907450538, guid: f71013dbd3166024b80031f1c73a401c, type: 3}
   confirmButton1: 1
   confirmButton0: 0
 --- !u!4 &1954554900
@@ -8074,3 +8135,4 @@ SceneRoots:
   - {fileID: 1714009064}
   - {fileID: 866139953}
   - {fileID: 788186332}
+  - {fileID: 13724624}
