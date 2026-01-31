@@ -546,7 +546,7 @@ CircleCollider2D:
   m_Material: {fileID: 0}
   m_IncludeLayers:
     serializedVersion: 2
-    m_Bits: 64
+    m_Bits: 65
   m_ExcludeLayers:
     serializedVersion: 2
     m_Bits: 1
@@ -697,10 +697,8 @@ MonoBehaviour:
   attackCD: 5
   behavior1CD: 0
   behavior2CD: 0
-  shitPoint: {fileID: 0}
-  shitPrefab: {fileID: 0}
-  ShitMMF: {fileID: 0}
-  shitForce: 0.5
+  shitPrefab: {fileID: 3470182767891373627, guid: 2613e783ac67d3943a3373896af27964, type: 3}
+  ShitMMF: {fileID: 3682486006131141075}
 --- !u!114 &-1337287484782630408
 MonoBehaviour:
   m_ObjectHideFlags: 0
