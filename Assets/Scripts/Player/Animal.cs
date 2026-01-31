@@ -12,7 +12,7 @@ public class Animal : MonoBehaviour
     public bool isplayer;
     public EnumTool.AnimalType animalType;
     public SpriteRenderer animalSprite;
-    private Animator _animator;
+    public Animator _animator;
 
     public GameObject GrassPrefab;
     public int GrassNum = 1;
@@ -36,11 +36,11 @@ public class Animal : MonoBehaviour
     [Tooltip("行为2冷却时长（秒），0 则无冷却")]
     public float behavior2CD = 0f;
 
-    private float _lastAttackTime = float.MinValue;
-    private float _lastBehavior1Time = float.MinValue;
-    private float _lastBehavior2Time = float.MinValue;
-    private Rigidbody2D _rb;
-    protected bool _isDead;
+    public float _lastAttackTime = float.MinValue;
+    public float _lastBehavior1Time = float.MinValue;
+    public float _lastBehavior2Time = float.MinValue;
+    public Rigidbody2D _rb;
+    public bool _isDead;
 
     private static readonly int WalkingId = Animator.StringToHash("Walking");
 
@@ -63,7 +63,7 @@ public class Animal : MonoBehaviour
             _rb.velocity = Vector2.zero;
     }
 
-    private bool CanMove()
+    public bool CanMove()
     {
         return GameLoopManager.Inst != null &&
                GameLoopManager.Inst.currentGameState == GameLoopManager.GameState.Starting;

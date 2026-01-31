@@ -166,11 +166,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: bba4822e6b19c7d47a563bb63250c563, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  behaviorTree: {fileID: 11400000, guid: 68c48278224bbf643b090e1b1f5c00bf, type: 2}
-  cubeCount: 20
+  behaviorTree: {fileID: 11400000, guid: 1cc1244b4652c1b4bacf3091cbf01d97, type: 2}
+  cubeCount: 1
   spawnHalfExtents: {x: 4, y: 0, z: 4}
   cubeScale: {x: 1, y: 1, z: 1}
-  cubePrefab: {fileID: 358465220907450538, guid: f71013dbd3166024b80031f1c73a401c, type: 3}
+  cubePrefab: {fileID: 358465220907450538, guid: a82af40fb7851af4c88c8f37c2f83396, type: 3}
   cubeMaterial: {fileID: 2110093186395255282, guid: 10f1060b18f7ba34f92053a256e89d10, type: 3}
 --- !u!1 &1068144000
 GameObject:
