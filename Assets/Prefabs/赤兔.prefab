@@ -39,7 +39,6 @@ Transform:
   - {fileID: 7888283612049330023}
   - {fileID: 5973077148999129368}
   - {fileID: 5570267582060824591}
-  - {fileID: 5532111783925551983}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &8822524691567185138
@@ -693,9 +692,9 @@ MonoBehaviour:
   _animator: {fileID: 0}
   GrassPrefab: {fileID: 0}
   GrassNum: 1
-  moveSpeed: 5
-  hitRangeOffset: 0.5
-  hitRangeRadius: 0.4
+  moveSpeed: 2
+  hitRangeOffset: -0.59
+  hitRangeRadius: 0.5
   attackCD: 5
   behavior1CD: 0
   behavior2CD: 0
@@ -706,6 +705,7 @@ MonoBehaviour:
   _isDead: 0
   ShitMMF: {fileID: 0}
   shitForce: 0.5
+  shitLifetime: 10
   dashHitRangeOffset: 0.5
   dashHitRangeRadius: 1
   dashImpulseForce: 500
@@ -896,7 +896,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &5911982200807939782
 Transform:
   m_ObjectHideFlags: 0
@@ -11263,37 +11263,6 @@ MonoBehaviour:
         DeclaredDuration: 0
         ForceSimulationSpeed: 0
         ForcedSimulationSpeed: {x: 0.1, y: 1}
---- !u!1 &6074932106855704870
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 5532111783925551983}
-  m_Layer: 0
-  m_Name: ShitPoint
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!4 &5532111783925551983
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 6074932106855704870}
-  serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0.782, y: -0.186, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 3630433582433113577}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &6763200170712223234
 GameObject:
   m_ObjectHideFlags: 0

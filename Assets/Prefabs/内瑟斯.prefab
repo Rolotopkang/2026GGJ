@@ -689,14 +689,20 @@ MonoBehaviour:
   isplayer: 0
   animalType: 1
   animalSprite: {fileID: 9016415337399201336}
+  _animator: {fileID: 0}
   GrassPrefab: {fileID: 0}
   GrassNum: 1
-  moveSpeed: 5
-  hitRangeOffset: 0.5
-  hitRangeRadius: 0.4
+  moveSpeed: 2
+  hitRangeOffset: -0.65
+  hitRangeRadius: 0.48
   attackCD: 5
   behavior1CD: 0
   behavior2CD: 0
+  _lastAttackTime: -3.4028235e+38
+  _lastBehavior1Time: -3.4028235e+38
+  _lastBehavior2Time: -3.4028235e+38
+  _rb: {fileID: 0}
+  _isDead: 0
   shitPrefab: {fileID: 3470182767891373627, guid: 2613e783ac67d3943a3373896af27964, type: 3}
   ShitMMF: {fileID: 3682486006131141075}
 --- !u!114 &-1337287484782630408
@@ -5804,12 +5810,12 @@ SpriteRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
-  m_Sprite: {fileID: 21300000, guid: 64434b7dd1631c8449a32de13893115e, type: 3}
+  m_Sprite: {fileID: 21300000, guid: 2b624a8b99ba3c042b6cd01df5e2dc00, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
   m_DrawMode: 0
-  m_Size: {x: 0.16, y: 0.16}
+  m_Size: {x: 2.56, y: 2.56}
   m_AdaptiveModeThreshold: 0.5
   m_SpriteTileMode: 0
   m_WasSpriteAssigned: 1
