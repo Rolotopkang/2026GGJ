@@ -69,6 +69,24 @@ public class Animal : MonoBehaviour
                GameLoopManager.Inst.currentGameState == GameLoopManager.GameState.Starting;
     }
 
+    private bool CanUseAbilities()
+    {
+        if (GameLoopManager.Inst == null) return false;
+        var state = GameLoopManager.Inst.currentGameState;
+        return state == GameLoopManager.GameState.Starting ||
+               state == GameLoopManager.GameState.WaitEnd;
+    }
+
+    /// <summary>
+    /// 是否正在播放攻击动画（用于移动锁定）。
+    /// </summary>
+    public bool IsAttacking()
+    {
+        if (_animator == null) return false;
+        var state = _animator.GetCurrentAnimatorStateInfo(0);
+        return state.IsName("Attack");
+    }
+
     private void UpdateWalkingState()
     {
         if (_animator == null) return;
@@ -96,10 +114,14 @@ public class Animal : MonoBehaviour
         if (_rb != null)
             _rb.velocity = Vector2.zero;
 
-        // 禁用玩家输入（若有 PlayerMovementMulti）
+        // 禁用玩家输入并通知 GameLoopManager（若有 PlayerMovementMulti）
         var movement = GetComponent<PlayerMovementMulti>();
         if (movement != null)
+        {
             movement.enabled = false;
+            if (GameLoopManager.Inst != null)
+                GameLoopManager.Inst.SetPlayerDead(movement.joystickIndex);
+        }
 
         // 禁用 NPC AI（若有 BehaviorTree）
         var bt = GetComponent<BehaviorTree>();
@@ -116,7 +138,7 @@ public class Animal : MonoBehaviour
 
     public virtual bool Attack()
     {
-        if (!CanMove()) return false;
+        if (!CanUseAbilities()) return false;
         if (attackCD > 0f && Time.time - _lastAttackTime < attackCD) return false;
         _lastAttackTime = Time.time;
         if (_animator != null)
@@ -149,12 +171,14 @@ public class Animal : MonoBehaviour
         if (!CanMove() || !isplayer || GrassNum < 1) return;
         Debug.Log(name+"烟雾弹");
         GrassNum--;
-        Instantiate(GrassPrefab, transform.position, quaternion.identity);
+        Transform parent = (GameLoopManager.Inst != null && GameLoopManager.Inst.animalRoot != null)
+            ? GameLoopManager.Inst.animalRoot : null;
+        Instantiate(GrassPrefab, transform.position, quaternion.identity, parent);
     }
 
     public virtual bool DoBehavior1()
     {
-        if (!CanMove()) return false;
+        if (!CanUseAbilities()) return false;
         if (behavior1CD > 0f && Time.time - _lastBehavior1Time < behavior1CD) return false;
         _lastBehavior1Time = Time.time;
         Debug.Log(name+"行为1");
@@ -163,7 +187,7 @@ public class Animal : MonoBehaviour
     
     public virtual bool DoBehavior2()
     {
-        if (!CanMove() || !isplayer) return false;
+        if (!CanUseAbilities() || !isplayer) return false;
         if (behavior2CD > 0f && Time.time - _lastBehavior2Time < behavior2CD) return false;
         _lastBehavior2Time = Time.time;
         Debug.Log(name+"行为2");

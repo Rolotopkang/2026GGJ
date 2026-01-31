@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using MoreMountains.Feedbacks;
+using Player;
 using UnityEngine;
 using UnityEngine.Serialization;
 
@@ -9,6 +10,7 @@ public class Animal_Sheep : Animal
     public Transform shitPoint;
     public GameObject shitPrefab;
     public MMF_Player ShitMMF;
+    public int ShitScore = 4;
     [Tooltip("屎飞出的力（Impulse）")]
     public float shitForce = 0.5f;
 
@@ -29,10 +31,16 @@ public class Animal_Sheep : Animal
             awayDir = ((Vector2)spawnPos - (Vector2)transform.position).normalized;
         }
 
-        GameObject shit = Instantiate(shitPrefab, spawnPos, Quaternion.identity);
+        Transform shitParent = (GameLoopManager.Inst != null && GameLoopManager.Inst.animalRoot != null)
+            ? GameLoopManager.Inst.animalRoot : null;
+        GameObject shit = Instantiate(shitPrefab, spawnPos, Quaternion.identity, shitParent);
         var rb = shit.GetComponent<Rigidbody2D>();
         if (rb != null)
             rb.AddForce(-awayDir * shitForce, ForceMode2D.Impulse);
+        if (isplayer)
+        {
+            GameLoopManager.Inst.AddScore(GetComponent<PlayerMovementMulti>().joystickIndex,ShitScore);
+        }
 
         return true;
     }

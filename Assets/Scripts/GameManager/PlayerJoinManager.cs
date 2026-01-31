@@ -87,4 +87,13 @@ public class PlayerJoinManager : SingletonMono<PlayerJoinManager>
             return n;
         }
     }
+
+    /// <summary>
+    /// 重置已加入状态，用于完全重置选人。
+    /// </summary>
+    public void ResetJoinedState()
+    {
+        for (int i = 0; i < MaxPlayers; i++)
+            _joined[i] = false;
+    }
 }

@@ -56,6 +56,15 @@ public static class GamepadVibration
         }
     }
 
+    /// <summary>
+    /// 清空所有已加入手柄，用于完全重置选人状态。
+    /// </summary>
+    public static void ClearJoined()
+    {
+        StopAll();
+        _joinedGamepads.Clear();
+    }
+
     public static Gamepad GetGamepadByIndex(int joystickIndex)
     {
         if (joystickIndex < 1 || joystickIndex > 4) return null;

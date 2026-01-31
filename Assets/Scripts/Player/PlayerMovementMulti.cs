@@ -20,7 +20,7 @@ public class PlayerMovementMulti : MonoBehaviour
     [Tooltip("振动时长（秒）")]
     [Range(0.05f, 0.5f)]
     public float vibrationDuration = 0.15f;
-
+    
     private Rigidbody2D _rb;
     private Vector2 _input;
     private bool _r2WasPressed;
@@ -43,7 +43,14 @@ public class PlayerMovementMulti : MonoBehaviour
 
     private void Update()
     {
-        if (!CanControl())
+        // 无论是否能控制，都要处理震动停止
+        if (_vibrateStopTime > 0f && Time.time >= _vibrateStopTime)
+        {
+            GamepadVibration.Stop(joystickIndex);
+            _vibrateStopTime = -1f;
+        }
+
+        if (!CanMove() && !CanUseAbilities())
         {
             _input = Vector2.zero;
             return;
@@ -56,71 +63,82 @@ public class PlayerMovementMulti : MonoBehaviour
             return;
         }
 
-        Vector2 stick = gamepad.leftStick.ReadValue();
-        _input.x = stick.x;
-        _input.y = stick.y;
-
-        float r2 = gamepad.rightTrigger.ReadValue();
-        if (r2 >= r2PressThreshold)
+        if (CanMove() && !_animal.IsAttacking())
         {
-            if (!_r2WasPressed)
-            {
-                _r2WasPressed = true;
-                if (_animal.Attack())
-                {
-                    GamepadVibration.Vibrate(joystickIndex, 0.6f, 0.6f);
-                    _vibrateStopTime = Time.time + vibrationDuration;
-                }
-            }
+            Vector2 stick = gamepad.leftStick.ReadValue();
+            _input.x = stick.x;
+            _input.y = stick.y;
+            if (_input.sqrMagnitude > 1f) _input.Normalize();
         }
         else
         {
-            _r2WasPressed = false;
+            _input = Vector2.zero;
         }
 
-        if (gamepad.rightShoulder.wasPressedThisFrame)
+        if (CanUseAbilities())
         {
-            _animal.UseGrassMagic();
-        }
-
-        if (gamepad.buttonEast.wasPressedThisFrame)  // B / 圆圈
-        {
-            if (_animal.DoBehavior1())
+            float r2 = gamepad.rightTrigger.ReadValue();
+            if (r2 >= r2PressThreshold)
             {
-                GamepadVibration.Vibrate(joystickIndex, 0.5f, 0.5f);
-                _vibrateStopTime = Time.time + vibrationDuration;
+                if (!_r2WasPressed)
+                {
+                    _r2WasPressed = true;
+                    if (_animal.Attack())
+                    {
+                        GamepadVibration.Vibrate(joystickIndex, 0.6f, 0.6f);
+                        _vibrateStopTime = Time.time + vibrationDuration;
+                    }
+                }
             }
-        }
-
-        if (gamepad.buttonNorth.wasPressedThisFrame)  // Y / 三角
-        {
-            if (_animal.DoBehavior2())
+            else
             {
-                GamepadVibration.Vibrate(joystickIndex, 0.5f, 0.5f);
-                _vibrateStopTime = Time.time + vibrationDuration;
+                _r2WasPressed = false;
             }
-        }
 
-        if (_input.sqrMagnitude > 1f)
-            _input.Normalize();
+            if (CanMove() && gamepad.rightShoulder.wasPressedThisFrame)
+            {
+                _animal.UseGrassMagic();
+            }
 
-        if (_vibrateStopTime > 0f && Time.time >= _vibrateStopTime)
-        {
-            GamepadVibration.Stop(joystickIndex);
-            _vibrateStopTime = -1f;
+            if (gamepad.buttonEast.wasPressedThisFrame)  // B / 圆圈
+            {
+                if (_animal.DoBehavior1())
+                {
+                    GamepadVibration.Vibrate(joystickIndex, 0.5f, 0.5f);
+                    _vibrateStopTime = Time.time + vibrationDuration;
+                }
+            }
+
+            if (gamepad.buttonNorth.wasPressedThisFrame)  // Y / 三角
+            {
+                if (_animal.DoBehavior2())
+                {
+                    GamepadVibration.Vibrate(joystickIndex, 0.5f, 0.5f);
+                    _vibrateStopTime = Time.time + vibrationDuration;
+                }
+            }
         }
     }
 
     private void FixedUpdate()
     {
         if (_rb == null) return;
-        _rb.velocity = CanControl() ? _input * _animal.moveSpeed : Vector2.zero;
+        bool canMove = CanMove() && !_animal.IsAttacking();
+        _rb.velocity = canMove ? _input * _animal.moveSpeed : Vector2.zero;
     }
 
-    private bool CanControl()
+    private bool CanMove()
     {
         return Player.GameLoopManager.Inst != null &&
                Player.GameLoopManager.Inst.currentGameState == Player.GameLoopManager.GameState.Starting;
+    }
+
+    private bool CanUseAbilities()
+    {
+        if (Player.GameLoopManager.Inst == null) return false;
+        var state = Player.GameLoopManager.Inst.currentGameState;
+        return state == Player.GameLoopManager.GameState.Starting ||
+               state == Player.GameLoopManager.GameState.WaitEnd;
     }
 
     private void OnDisable()
