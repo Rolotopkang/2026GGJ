@@ -51,7 +51,7 @@ namespace WanderingCubes.BehaviorDesigner
                 case EnumTool.AnimalType.Dog:
                     return new Vector2(4, 5);
                 case EnumTool.AnimalType.House:
-                    return new Vector2(5, 6);
+                    return new Vector2(6, 8);
                 default:
                     return new Vector2(1, 2);
             }

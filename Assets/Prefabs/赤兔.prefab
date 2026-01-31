@@ -690,6 +690,7 @@ MonoBehaviour:
   isplayer: 0
   animalType: 2
   animalSprite: {fileID: 9016415337399201336}
+  _animator: {fileID: 0}
   GrassPrefab: {fileID: 0}
   GrassNum: 1
   moveSpeed: 5
@@ -698,10 +699,18 @@ MonoBehaviour:
   attackCD: 5
   behavior1CD: 0
   behavior2CD: 0
-  shitPoint: {fileID: 0}
-  shitPrefab: {fileID: 0}
+  _lastAttackTime: -3.4028235e+38
+  _lastBehavior1Time: -3.4028235e+38
+  _lastBehavior2Time: -3.4028235e+38
+  _rb: {fileID: 0}
+  _isDead: 0
   ShitMMF: {fileID: 0}
   shitForce: 0.5
+  dashHitRangeOffset: 0.5
+  dashHitRangeRadius: 1
+  dashImpulseForce: 500
+  dashSpeedMultiplier: 1
+  dashDuration: 0.3
 --- !u!114 &-1337287484782630408
 MonoBehaviour:
   m_ObjectHideFlags: 0
