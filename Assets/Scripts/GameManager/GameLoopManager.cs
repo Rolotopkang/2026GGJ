@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using MoreMountains.Feedbacks;
 using UnityEngine;
 using UnityEngine.InputSystem;
+using UnityEngine.Serialization;
 using Random = UnityEngine.Random;
 
 namespace Player
@@ -40,14 +41,52 @@ namespace Player
         [Tooltip("生成的所有 NPC 与玩家将挂在此物体下，不填则挂在场景根")]
         public Transform animalRoot;
 
+        [Header("游戏结束条件")]
+        [Tooltip("达到此分数时触发游戏结束")]
+        [Min(1)]
+        public int maxScore = 100;
+        [Tooltip("仅剩一名存活玩家时结束游戏。取消勾选可单手柄测试")]
+        public bool endWhenOneSurvivor = true;
+
+        [Header("胜利聚焦")]
+        [Tooltip("聚焦动画时长（秒）")]
+        public float focusDuration = 1.5f;
+        [Tooltip("聚焦节奏曲线：X=0~1 进度，Y=插值系数。EaseInOut 为前慢后快再慢")]
+        public AnimationCurve focusCurve = AnimationCurve.EaseInOut(0f, 0f, 1f, 1f);
+        [Tooltip("聚焦完成时，摄像机父父物体相对胜利玩家位置的 XY 偏移（世界坐标）")]
+        public Vector2 focusCameraOffset = Vector2.zero;
+        [Tooltip("聚焦时的目标 orthographicSize（越小画面越大）")]
+        [Min(0.1f)]
+        public float focusOrthoSize = 2.5f;
+        [Tooltip("聚焦完成后的回调，可在 Inspector 中绑定")]
+        public UnityEngine.Events.UnityEvent onFocusComplete;
+
         public bool isGameStart = false;
 
         private Coroutine _spawnCoroutine;
 
         public GameState currentGameState = GameState.Logo;
 
-        public MMF_Player banner;
+        public MMF_Player StartBanner;
+        
+        public GameObject EndBanner;
+        
         private readonly List<GameObject> _spawnedPlayers = new List<GameObject>();
+
+        private int[] _playerScores = new int[0];
+        private bool[] _playerDead = new bool[0];
+        private int _winnerIndex = -1;
+
+        private Camera _mainCamera;
+        private Transform _focusTarget;
+        private Vector3 _initialFocusTargetPosition;
+        private float _initialCamOrthoSize;
+        private Coroutine _focusCoroutine;
+
+        /// <summary>
+        /// 获取本局获胜玩家的索引（1～4）。若无获胜者返回 -1。
+        /// </summary>
+        public int WinnerIndex => _winnerIndex;
         
         public enum GameState
         {
@@ -60,7 +99,7 @@ namespace Player
 
         private void Start()
         {
-            banner.gameObject.SetActive(false);
+            StartBanner.gameObject.SetActive(false);
         }
 
         private void Update()
@@ -71,20 +110,116 @@ namespace Player
                 if (Keyboard.current == null) return;
                 if (Keyboard.current[Key.Space].wasPressedThisFrame)
                 {
-                    //Start Game
-                    currentGameState = GameState.WaitStart;
-                    
+                    TransitionToWaitStart();
                     TransitionController.Inst.PlayBlackTransition(0.3f,()=> PlayerJoinUI.Inst.transform.gameObject.SetActive(false),OnTransitionDown);
                 }
+            }
+
+            if (currentGameState == GameState.Starting)
+            {
+                CheckGameOverConditions();
             }
         }
 
         public void TestStartGame()
         {
-            //Start Game
-            currentGameState = GameState.WaitStart;
-                    
+            TransitionToWaitStart();
             TransitionController.Inst.PlayBlackTransition(0.3f,()=> PlayerJoinUI.Inst.transform.gameObject.SetActive(false),OnTransitionDown);
+        }
+
+        private void TransitionToWaitStart()
+        {
+            currentGameState = GameState.WaitStart;
+            InitPlayerState();
+        }
+
+        private void InitPlayerState()
+        {
+            int count = PlayerJoinManager.Inst != null ? PlayerJoinManager.Inst.JoinedCount : 0;
+            count = Mathf.Clamp(count, 0, 4);
+            _playerScores = new int[count];
+            _playerDead = new bool[count];
+            for (int i = 0; i < count; i++)
+            {
+                _playerScores[i] = 0;
+                _playerDead[i] = false;
+            }
+            _winnerIndex = -1;
+        }
+
+        private void CheckGameOverConditions()
+        {
+            int count = _playerScores.Length;
+            if (count == 0) return;
+
+            for (int i = 0; i < count; i++)
+            {
+                if (_playerScores[i] >= maxScore)
+                {
+                    _winnerIndex = i + 1;
+                    OnGameOver();
+                    return;
+                }
+            }
+
+            if (endWhenOneSurvivor)
+            {
+                int aliveCount = 0;
+                int lastAliveIdx = -1;
+                for (int i = 0; i < count; i++)
+                {
+                    if (!_playerDead[i])
+                    {
+                        aliveCount++;
+                        lastAliveIdx = i;
+                    }
+                }
+                if (aliveCount <= 1)
+                {
+                    _winnerIndex = lastAliveIdx >= 0 ? lastAliveIdx + 1 : -1;
+                    OnGameOver();
+                }
+            }
+        }
+
+        /// <summary>
+        /// 给指定玩家加分。playerIndex 为 1～4 的手柄/玩家编号。
+        /// </summary>
+        public void AddScore(int playerIndex, int amount)
+        {
+            int idx = playerIndex - 1;
+            if (idx < 0 || idx >= _playerScores.Length) return;
+            _playerScores[idx] += amount;
+        }
+
+        /// <summary>
+        /// 将指定玩家设为死亡状态。playerIndex 为 1～4 的手柄/玩家编号。
+        /// </summary>
+        public void SetPlayerDead(int playerIndex)
+        {
+            int idx = playerIndex - 1;
+            if (idx < 0 || idx >= _playerDead.Length) return;
+            _playerDead[idx] = true;
+        }
+
+        /// <summary>
+        /// 获取玩家分数。playerIndex 为 1～4。无效索引返回 0。
+        /// </summary>
+        public int GetPlayerScore(int playerIndex)
+        {
+            int idx = playerIndex - 1;
+            if (idx < 0 || idx >= _playerScores.Length) return 0;
+            return _playerScores[idx];
+        }
+
+        /// <summary>
+        /// 获取玩家是否已死亡。playerIndex 为 1～4。无效索引返回 true。
+        /// </summary>
+        public bool IsPlayerDead(int playerIndex)
+        {
+            int idx = playerIndex - 1;
+            if (idx < 0 || idx >= _playerDead.Length) return true;
+            return _playerDead[idx];
         }
 
         private void OnTransitionDown()
@@ -167,12 +302,12 @@ namespace Player
 
         public void ShowStartingUI()
         {
-            banner.gameObject.SetActive(true);
+            StartBanner.gameObject.SetActive(true);
         }
 
         public void OnShowStartingUIEnd()
         {
-            banner.gameObject.SetActive(false);
+            StartBanner.gameObject.SetActive(false);
             currentGameState = GameState.Starting;
         }
 
@@ -209,7 +344,145 @@ namespace Player
                 spawnRegionCenter.x + Random.Range(-halfW, halfW),
                 spawnRegionCenter.y + Random.Range(-halfH, halfH));
         }
-        
+
+        private void OnGameOver()
+        {
+            if (currentGameState == GameState.WaitEnd) return;
+            currentGameState = GameState.WaitEnd;
+            Debug.Log("GameOver, Winner is "+ _winnerIndex);
+            StartFocusOnWinner();
+
+        }
+
+        private void StartFocusOnWinner()
+        {
+            if (_winnerIndex < 1) return;
+
+            Transform winnerTransform = GetWinnerTransform();
+            if (winnerTransform == null) return;
+
+            _mainCamera = Camera.main;
+            if (_mainCamera == null) return;
+
+            _focusTarget = GetCameraFocusTarget(_mainCamera.transform);
+            _initialFocusTargetPosition = _focusTarget.position;
+            _initialCamOrthoSize = _mainCamera.orthographicSize;
+
+            if (_focusCoroutine != null)
+                StopCoroutine(_focusCoroutine);
+            _focusCoroutine = StartCoroutine(FocusOnWinnerCoroutine(winnerTransform));
+        }
+
+        private Transform GetCameraFocusTarget(Transform camTransform)
+        {
+            if (camTransform.parent != null && camTransform.parent.parent != null)
+                return camTransform.parent.parent;
+            if (camTransform.parent != null)
+                return camTransform.parent;
+            return camTransform;
+        }
+
+        private Transform GetWinnerTransform()
+        {
+            foreach (GameObject go in _spawnedPlayers)
+            {
+                if (go == null) continue;
+                var multi = go.GetComponent<PlayerMovementMulti>();
+                if (multi != null && multi.joystickIndex == _winnerIndex)
+                    return go.transform;
+            }
+            return null;
+        }
+
+        private IEnumerator FocusOnWinnerCoroutine(Transform winner)
+        {
+            float elapsed = 0f;
+            Vector3 startPos = _focusTarget.position;
+            float startSize = _mainCamera.orthographicSize;
+            float startZ = startPos.z;
+            Vector2 targetPos2 = new Vector2(winner.position.x + focusCameraOffset.x, winner.position.y + focusCameraOffset.y);
+            Vector3 targetPos = new Vector3(targetPos2.x, targetPos2.y, startZ);
+
+            AnimationCurve curve = focusCurve != null ? focusCurve : AnimationCurve.EaseInOut(0f, 0f, 1f, 1f);
+            float duration = Mathf.Max(0.01f, focusDuration);
+
+            while (elapsed < duration)
+            {
+                elapsed += Time.deltaTime;
+                float t = Mathf.Clamp01(elapsed / duration);
+                float eval = curve.Evaluate(t);
+
+                _focusTarget.position = Vector3.LerpUnclamped(startPos, targetPos, eval);
+                _mainCamera.orthographicSize = Mathf.LerpUnclamped(startSize, focusOrthoSize, eval);
+
+                yield return null;
+            }
+
+            _focusTarget.position = targetPos;
+            _mainCamera.orthographicSize = focusOrthoSize;
+            _focusCoroutine = null;
+
+            onFocusComplete?.Invoke();
+        }
+
+        /// <summary>
+        /// 恢复摄像头到聚焦前的原位与 orthographicSize。
+        /// </summary>
+        public void RestoreCamera()
+        {
+            if (_mainCamera == null) _mainCamera = Camera.main;
+            if (_mainCamera == null) return;
+
+            if (_focusCoroutine != null)
+            {
+                StopCoroutine(_focusCoroutine);
+                _focusCoroutine = null;
+            }
+
+            if (_focusTarget != null)
+                _focusTarget.position = _initialFocusTargetPosition;
+            _mainCamera.orthographicSize = _initialCamOrthoSize;
+        }
+
+        public void OpenEndBanner()
+        {
+            EndBanner.SetActive(true);
+            EndBanner.transform.GetChild(0).GetChild(_winnerIndex-1).GetComponent<MMF_Player>().PlayFeedbacks();
+        }
+
+        public void ReturnPickPlayer()
+        {
+            TransitionController.Inst.PlayBlackTransition(0.3f,
+                () =>
+                {
+                    RestoreCamera();
+                    if (EndBanner != null)
+                    {
+                        EndBanner.transform.GetChild(0).GetChild(_winnerIndex-1).GetComponent<MMF_Player>().RestoreInitialValues();
+                        EndBanner.SetActive(false);
+                    }
+                    ClearSpawnedObjects();
+                    GamepadVibration.ClearJoined();
+                    if (PlayerJoinManager.Inst != null) PlayerJoinManager.Inst.ResetJoinedState();
+                    if (PlayerJoinUI.Inst != null)
+                    {
+                        PlayerJoinUI.Inst.ResetToPickState();
+                        PlayerJoinUI.Inst.gameObject.SetActive(true);
+                    }
+                },
+                () =>
+                {
+                    currentGameState = GameState.PickPlayer;
+                });
+        }
+
+        private void ClearSpawnedObjects()
+        {
+            _spawnedPlayers.Clear();
+            if (animalRoot == null) return;
+            for (int i = animalRoot.childCount - 1; i >= 0; i--)
+                Destroy(animalRoot.GetChild(i).gameObject);
+        }
         
 #if UNITY_EDITOR
         private void OnDrawGizmosSelected()
