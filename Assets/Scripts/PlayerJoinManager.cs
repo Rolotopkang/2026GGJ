@@ -1,9 +1,9 @@
 using UnityEngine;
 using System.Collections.Generic;
+using UnityEngine.InputSystem;
 
 /// <summary>
-/// 多手柄加入：当某个手柄按下确认键（PS4 圆圈 / Xbox B，或 A/X）时，
-/// 为该手柄生成一个玩家方块，且仅该手柄控制该方块。
+/// 多手柄加入（新 Input System）：当某个手柄按下确认键（A/B）时生成玩家。
 /// </summary>
 public class PlayerJoinManager : MonoBehaviour
 {
@@ -22,9 +22,9 @@ public class PlayerJoinManager : MonoBehaviour
     };
 
     [Header("确认键")]
-    [Tooltip("PS4 圆圈 / Xbox B")]
+    [Tooltip("Xbox B / PS 圆圈")]
     public bool confirmButton1 = true;
-    [Tooltip("PS4 叉 / Xbox A（也可当确认）")]
+    [Tooltip("Xbox A / PS 叉")]
     public bool confirmButton0 = true;
 
     private const int MaxPlayers = 4;
@@ -34,25 +34,24 @@ public class PlayerJoinManager : MonoBehaviour
     private void Update()
     {
         if (playerPrefab == null) return;
+        if (JoinedCount >= MaxPlayers) return;
 
-        for (int j = 1; j <= MaxPlayers; j++)
+        for (int i = 0; i < Gamepad.all.Count; i++)
         {
-            if (_joined[j - 1]) continue;
+            Gamepad g = Gamepad.all[i];
+            if (g == null) continue;
+            if (GamepadVibration.IsGamepadJoined(g)) continue;
 
-            if (GetConfirmDown(j))
-            {
-                JoinPlayer(j);
-            }
+            bool confirmDown = (confirmButton0 && g.buttonSouth.wasPressedThisFrame) ||
+                              (confirmButton1 && g.buttonEast.wasPressedThisFrame);
+            if (!confirmDown) continue;
+
+            int joystickIndex = GamepadVibration.RegisterJoinedGamepad(g);
+            if (joystickIndex == 0) continue;
+
+            JoinPlayer(joystickIndex);
+            return;
         }
-    }
-
-    private bool GetConfirmDown(int joystickNumber)
-    {
-        int base0 = (int)KeyCode.Joystick1Button0 + (joystickNumber - 1) * 20;
-        int base1 = (int)KeyCode.Joystick1Button1 + (joystickNumber - 1) * 20;
-        if (confirmButton0 && Input.GetKeyDown((KeyCode)base0)) return true;
-        if (confirmButton1 && Input.GetKeyDown((KeyCode)base1)) return true;
-        return false;
     }
 
     private void JoinPlayer(int joystickIndex)
@@ -70,16 +69,10 @@ public class PlayerJoinManager : MonoBehaviour
         if (multi == null)
             multi = go.AddComponent<PlayerMovementMulti>();
         multi.joystickIndex = joystickIndex;
-
-        var single = go.GetComponent<PlayerMovement>();
-        if (single != null)
-            single.enabled = false;
-
         _spawnedPlayers.Add(go);
         Debug.Log($"玩家 {joystickIndex} 已加入（手柄 {joystickIndex}）");
     }
 
-    /// <summary>当前已加入的玩家数量。</summary>
     public int JoinedCount
     {
         get
@@ -91,6 +84,5 @@ public class PlayerJoinManager : MonoBehaviour
         }
     }
 
-    /// <summary>已生成的所有玩家物体。</summary>
     public IReadOnlyList<GameObject> SpawnedPlayers => _spawnedPlayers;
 }

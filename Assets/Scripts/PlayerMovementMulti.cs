@@ -1,8 +1,9 @@
 using UnityEngine;
+using UnityEngine.InputSystem;
 
 /// <summary>
-/// 多玩家用手柄控制：只读取指定手柄编号的输入，不与其他玩家串键。
-/// 由 PlayerJoinManager 在生成玩家时挂上并设置 joystickIndex。
+/// 多玩家用手柄控制（新 Input System）。只读取指定手柄编号的输入。
+/// 震动通过 GamepadVibration.Vibrate/Stop 控制。
 /// </summary>
 public class PlayerMovementMulti : MonoBehaviour
 {
@@ -38,8 +39,6 @@ public class PlayerMovementMulti : MonoBehaviour
 
     private void Awake()
     {
-        // 不在这里缓存轴名：joystickIndex 是生成后由 PlayerJoinManager 设置的，
-        // Awake 执行时还是预制体默认值 1，会导致玩家 2/3/4 也读 J1 的轴。
         if (useRigidbody2D)
         {
             _rb = GetComponent<Rigidbody2D>();
@@ -54,20 +53,19 @@ public class PlayerMovementMulti : MonoBehaviour
 
     private void Update()
     {
-        _input.x = Input.GetAxisRaw("Horizontal_J" + joystickIndex);
-        _input.y = Input.GetAxisRaw("Vertical_J" + joystickIndex);
+        Gamepad gamepad = GamepadVibration.GetGamepadByIndex(joystickIndex);
+        if (gamepad == null)
+        {
+            _input = Vector2.zero;
+            return;
+        }
 
-        if (_input.sqrMagnitude > 1f)
-            _input.Normalize();
+        Vector2 stick = gamepad.leftStick.ReadValue();
+        _input.x = stick.x;
+        _input.y = stick.y;
 
-        if (!useRigidbody2D)
-            transform.position += (Vector3)(_input * moveSpeed * Time.deltaTime);
-
-        // R2 扳机：仅用 axis 9（主）和 axis 5（Alt），按下时累加器 +1。用绝对值避免负值漏判；不用 4/10 以免松开时误触发。
-        float r2Main = Input.GetAxis("TriggerR2_J" + joystickIndex);
-        float r2Alt = Input.GetAxis("TriggerR2_J" + joystickIndex + "_Alt");
-        float r2Abs = Mathf.Max(Mathf.Abs(r2Main), Mathf.Abs(r2Alt));
-        if (r2Abs >= r2PressThreshold)
+        float r2 = gamepad.rightTrigger.ReadValue();
+        if (r2 >= r2PressThreshold)
         {
             if (!_r2WasPressed)
             {
@@ -81,6 +79,12 @@ public class PlayerMovementMulti : MonoBehaviour
         {
             _r2WasPressed = false;
         }
+
+        if (_input.sqrMagnitude > 1f)
+            _input.Normalize();
+
+        if (!useRigidbody2D)
+            transform.position += (Vector3)(_input * moveSpeed * Time.deltaTime);
 
         if (_vibrateStopTime > 0f && Time.time >= _vibrateStopTime)
         {

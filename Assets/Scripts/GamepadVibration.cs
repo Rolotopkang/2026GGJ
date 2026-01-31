@@ -1,80 +1,92 @@
 using UnityEngine;
-using System;
-using System.Runtime.InteropServices;
+using UnityEngine.InputSystem;
+using UnityEngine.InputSystem.Haptics;
+using System.Collections.Generic;
 
 /// <summary>
-/// Windows 下手柄振动（XInput）。仅对 Xbox 或虚拟成 XInput 的手柄有效；
-/// PS4/PS5 原生 DirectInput 不支持，需用 DS4Windows 等转成 XInput 才能震。
-/// 非 Windows 平台调用时忽略。
+/// 手柄振动（新 Input System）。通过 IDualMotorRumble.SetMotorSpeeds 控制震动，
+/// 兼容 Xbox（Gamepad）与 PS4/PS5（DualShock4GamepadHID / DualSenseGamepadHID）。joystickIndex 1～4 为加入顺序。
 /// </summary>
 public static class GamepadVibration
 {
-#if UNITY_STANDALONE_WIN || UNITY_EDITOR_WIN
-    [StructLayout(LayoutKind.Sequential)]
-    private struct XINPUT_VIBRATION
-    {
-        public ushort wLeftMotorSpeed;
-        public ushort wRightMotorSpeed;
-    }
+    private static readonly List<Gamepad> _joinedGamepads = new List<Gamepad>();
 
-    [DllImport("xinput1_4.dll", EntryPoint = "XInputSetState")]
-    private static extern int XInputSetState_4(int dwUserIndex, ref XINPUT_VIBRATION pVibration);
-
-    [DllImport("xinput1_3.dll", EntryPoint = "XInputSetState")]
-    private static extern int XInputSetState_3(int dwUserIndex, ref XINPUT_VIBRATION pVibration);
-
-    private const ushort MaxMotor = 65535;
-    private static bool _useV3; // xinput1_4 不可用时改用 xinput1_3
-#endif
-
-    /// <summary>
-    /// 振动指定手柄。joystickIndex 为 1～4（与 Input 里 Joystick 1～4 对应）。
-    /// </summary>
     public static void Vibrate(int joystickIndex, float leftMotor = 0.5f, float rightMotor = 0.5f)
     {
-#if UNITY_STANDALONE_WIN || UNITY_EDITOR_WIN
-        if (joystickIndex < 1 || joystickIndex > 4) return;
-        int userIndex = joystickIndex - 1;
-        var v = new XINPUT_VIBRATION
+        var gamepad = GetGamepadByIndex(joystickIndex);
+        if (gamepad == null) return;
+
+        float l = Mathf.Clamp01(leftMotor);
+        float r = Mathf.Clamp01(rightMotor);
+
+        if (gamepad is IDualMotorRumble rumble)
         {
-            wLeftMotorSpeed = (ushort)(Mathf.Clamp01(leftMotor) * MaxMotor),
-            wRightMotorSpeed = (ushort)(Mathf.Clamp01(rightMotor) * MaxMotor)
-        };
-        try
-        {
-            if (_useV3)
-                XInputSetState_3(userIndex, ref v);
-            else
-            {
-                XInputSetState_4(userIndex, ref v);
-            }
+            rumble.SetMotorSpeeds(l, r);
         }
-        catch (DllNotFoundException)
+        else
         {
-            _useV3 = true;
-            try { XInputSetState_3(userIndex, ref v); } catch { }
+            gamepad.SetMotorSpeeds(l, r);
         }
-#endif
     }
 
-    /// <summary>
-    /// 停止指定手柄振动。
-    /// </summary>
     public static void Stop(int joystickIndex)
     {
-#if UNITY_STANDALONE_WIN || UNITY_EDITOR_WIN
-        if (joystickIndex < 1 || joystickIndex > 4) return;
-        int userIndex = joystickIndex - 1;
-        var v = new XINPUT_VIBRATION { wLeftMotorSpeed = 0, wRightMotorSpeed = 0 };
-        try
+        var gamepad = GetGamepadByIndex(joystickIndex);
+        if (gamepad == null) return;
+
+        if (gamepad is IDualMotorRumble rumble)
         {
-            if (_useV3)
-                XInputSetState_3(userIndex, ref v);
-            else
-                XInputSetState_4(userIndex, ref v);
+            rumble.SetMotorSpeeds(0f, 0f);
         }
-        catch (DllNotFoundException) { _useV3 = true; }
-        catch { }
-#endif
+        else
+        {
+            gamepad.SetMotorSpeeds(0f, 0f);
+        }
+    }
+
+    public static void StopAll()
+    {
+        for (int i = 0; i < _joinedGamepads.Count; i++)
+        {
+            if (_joinedGamepads[i] == null) continue;
+            if (_joinedGamepads[i] is IDualMotorRumble rumble)
+                rumble.SetMotorSpeeds(0f, 0f);
+            else
+                _joinedGamepads[i].SetMotorSpeeds(0f, 0f);
+        }
+    }
+
+    public static Gamepad GetGamepadByIndex(int joystickIndex)
+    {
+        if (joystickIndex < 1 || joystickIndex > 4) return null;
+        int idx = joystickIndex - 1;
+        if (idx >= _joinedGamepads.Count) return null;
+        var g = _joinedGamepads[idx];
+        return g;
+    }
+
+    public static int RegisterJoinedGamepad(Gamepad gamepad)
+    {
+        if (gamepad == null || _joinedGamepads.Count >= 4) return 0;
+        int id = gamepad.deviceId;
+        for (int i = 0; i < _joinedGamepads.Count; i++)
+        {
+            if (_joinedGamepads[i] != null && _joinedGamepads[i].deviceId == id)
+                return 0;
+        }
+        _joinedGamepads.Add(gamepad);
+        return _joinedGamepads.Count;
+    }
+
+    public static bool IsGamepadJoined(Gamepad gamepad)
+    {
+        if (gamepad == null) return false;
+        int id = gamepad.deviceId;
+        for (int i = 0; i < _joinedGamepads.Count; i++)
+        {
+            if (_joinedGamepads[i] != null && _joinedGamepads[i].deviceId == id)
+                return true;
+        }
+        return false;
     }
 }
