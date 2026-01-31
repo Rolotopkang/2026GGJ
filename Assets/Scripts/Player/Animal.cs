@@ -31,14 +31,25 @@ public class Animal : MonoBehaviour
     private float _lastBehavior2Time = float.MinValue;
     private Rigidbody2D _rb;
 
+    private static readonly int WalkingId = Animator.StringToHash("Walking");
+
     public void Start()
     {
         _rb = GetComponent<Rigidbody2D>();
+        _animator = GetComponentInChildren<Animator>();
     }
 
     private void LateUpdate()
     {
         UpdateFacingFromVelocity();
+        UpdateWalkingState();
+    }
+
+    private void UpdateWalkingState()
+    {
+        if (_animator == null) return;
+        bool moving = _rb != null && _rb.velocity.sqrMagnitude > 0.01f;
+        _animator.SetBool(WalkingId, moving);
     }
 
     /// <summary>

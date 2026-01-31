@@ -77,6 +77,14 @@ namespace Player
             }
         }
 
+        public void TestStartGame()
+        {
+            //Start Game
+            currentGameState = GameState.WaitStart;
+                    
+            TransitionController.Inst.PlayBlackTransition(0.3f,()=> PlayerJoinUI.Inst.transform.gameObject.SetActive(false),OnTransitionDown);
+        }
+
         private void OnTransitionDown()
         {
             GenerateAnimals();

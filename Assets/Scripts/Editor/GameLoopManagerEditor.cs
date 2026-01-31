@@ -10,17 +10,25 @@ public class GameLoopManagerEditor : Editor
         DrawDefaultInspector();
 
         EditorGUILayout.Space(8f);
+
+        EditorGUI.BeginDisabledGroup(!Application.isPlaying);
+        EditorGUILayout.BeginHorizontal();
+        if (GUILayout.Button("Test Start Game", GUILayout.Height(28f)))
+        {
+            var manager = (GameLoopManager)target;
+            if (Application.isPlaying)
+                manager.TestStartGame();
+        }
         if (GUILayout.Button("Generate Animals (测试)", GUILayout.Height(28f)))
         {
             var manager = (GameLoopManager)target;
             if (Application.isPlaying)
-            {
                 manager.GenerateAnimals();
-            }
-            else
-            {
-                Debug.LogWarning("[GameLoopManager] 仅可在运行时测试，请先进入 Play 模式。");
-            }
         }
+        EditorGUILayout.EndHorizontal();
+        EditorGUI.EndDisabledGroup();
+
+        if (!Application.isPlaying)
+            EditorGUILayout.HelpBox("仅可在 Play 模式下测试", MessageType.Info);
     }
 }

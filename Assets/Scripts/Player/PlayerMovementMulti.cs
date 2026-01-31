@@ -1,3 +1,4 @@
+using BehaviorDesigner.Runtime;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
@@ -30,6 +31,7 @@ public class PlayerMovementMulti : MonoBehaviour
     {
         _animal = GetComponent<Animal>();
         _animal.isplayer = true;
+        _animal.GetComponent<BehaviorTree>().enabled = false;
         _rb = GetComponent<Rigidbody2D>();
         if (_rb == null)
         {

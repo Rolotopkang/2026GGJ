@@ -7187,7 +7187,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   NPCPrefab: {fileID: 358465220907450538, guid: f71013dbd3166024b80031f1c73a401c, type: 3}
-  playerPrefab: {fileID: 0}
+  playerPrefab: {fileID: 358465220907450538, guid: f71013dbd3166024b80031f1c73a401c, type: 3}
   spawnCount: 25
   spawnRegionCenter: {x: 0, y: 0}
   spawnRegionSize: {x: 15.83, y: 8.76}

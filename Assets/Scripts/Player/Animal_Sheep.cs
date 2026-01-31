@@ -2,19 +2,21 @@ using System.Collections;
 using System.Collections.Generic;
 using MoreMountains.Feedbacks;
 using UnityEngine;
+using UnityEngine.Serialization;
 
 public class Animal_Sheep : Animal
 {
     public Transform shitPoint;
     public GameObject shitPrefab;
-    public MMF_Player sheepMMF;
+    public MMF_Player ShitMMF;
+    public MMF_Player MieMMF;
     [Tooltip("屎飞出的力（Impulse）")]
     public float shitForce = 0.5f;
 
     public override bool DoBehavior1()
     {
         if (!base.DoBehavior1()) return false;
-        sheepMMF?.PlayFeedbacks();
+        ShitMMF?.PlayFeedbacks();
 
         Vector3 spawnPos;
         Vector2 awayDir;
@@ -39,6 +41,9 @@ public class Animal_Sheep : Animal
 
     public override bool DoBehavior2()
     {
-        return base.DoBehavior2();
+        if (!base.DoBehavior1()) return false;
+        MieMMF?.PlayFeedbacks();
+        //TODO
+        return true;
     }
 }
