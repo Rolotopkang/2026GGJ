@@ -60,7 +60,7 @@ namespace WanderingCubes.BehaviorDesigner
         public override TaskStatus OnUpdate()
         {
             // 调试日志
-            Debug.Log($"[GetRandomPositionInArea2D] minTargetDistance={minTargetDistance.Value}, maxTargetDistance={maxTargetDistance.Value}");
+            //Debug.Log($"[GetRandomPositionInArea2D] minTargetDistance={minTargetDistance.Value}, maxTargetDistance={maxTargetDistance.Value}");
 
             Vector2 c;
             Vector2 he;
@@ -88,7 +88,6 @@ namespace WanderingCubes.BehaviorDesigner
             // 检查是否需要距离限制
             bool needDistanceLimit = minTargetDistance.Value > 0f || maxTargetDistance.Value > 0f;
             Vector2 finalPosition = Vector2.zero;
-            bool foundValidPosition = false;
 
             // 尝试生成符合距离要求的位置
             /*int maxAttempts = needDistanceLimit ? maxRetryAttempts.Value : 1;
@@ -135,7 +134,7 @@ namespace WanderingCubes.BehaviorDesigner
                 currentPos,
                 GameLoopManager.Inst.spawnRegionCenter,
                 GameLoopManager.Inst.spawnRegionSize * 0.5f,
-                MoveDisLimit.x,MoveDisLimit.y);
+                1,2);
             
                 /*storeResult.Value = GetRandomPointInRectangleWithMaxDistance(
                     currentPos,
@@ -148,7 +147,7 @@ namespace WanderingCubes.BehaviorDesigner
             
             var dis = Vector2.Distance(currentPos, randompos);
             storeResult.Value = randompos;
-            Debug.Log($"[MoveTowardsTargetUntilReached2D] 目标移动距离: {dis:F2}m");
+            //Debug.Log($"[MoveTowardsTargetUntilReached2D] 目标移动距离: {dis:F2}m");
 
             /*// 如果没有找到符合条件的位置，使用最后一次的结果
             if (!foundValidPosition && needDistanceLimit)
