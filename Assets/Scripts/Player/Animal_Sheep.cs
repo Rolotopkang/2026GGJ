@@ -9,7 +9,6 @@ public class Animal_Sheep : Animal
     public Transform shitPoint;
     public GameObject shitPrefab;
     public MMF_Player ShitMMF;
-    public MMF_Player MieMMF;
     [Tooltip("屎飞出的力（Impulse）")]
     public float shitForce = 0.5f;
 
@@ -17,7 +16,6 @@ public class Animal_Sheep : Animal
     {
         if (!base.DoBehavior1()) return false;
         ShitMMF?.PlayFeedbacks();
-
         Vector3 spawnPos;
         Vector2 awayDir;
         if (animalSprite != null && animalSprite.flipX)
@@ -42,8 +40,6 @@ public class Animal_Sheep : Animal
     public override bool DoBehavior2()
     {
         if (!base.DoBehavior1()) return false;
-        MieMMF?.PlayFeedbacks();
-        //TODO
         return true;
     }
 }
