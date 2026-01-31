@@ -111,7 +111,7 @@ public class Animal_Horse : Animal
             // 保持冲刺速度
             if (_rb != null && !_isDead)
             {
-                _rb.velocity = _dashDirection * moveSpeed * dashSpeedMultiplier;
+                //_rb.velocity = _dashDirection * moveSpeed * dashSpeedMultiplier;
             }
 
             yield return null;
@@ -153,15 +153,8 @@ public class Animal_Horse : Animal
                 }
 
                 otherRb.AddForce(_dashDirection * dashImpulseForce, ForceMode2D.Impulse);
-                Debug.Log($"冲刺撞到 {col.gameObject.name}，施加冲量: {_dashDirection * dashImpulseForce * 50}");
+                Debug.Log($"冲刺撞到 {col.gameObject.name}，施加冲量: {_dashDirection * dashImpulseForce}");
             }
-
-            // 如果撞到的是动物，让其死亡
-            /*var otherAnimal = col.GetComponent<Animal>();
-            if (otherAnimal != null && otherAnimal != this && !otherAnimal._isDead)
-            {
-                otherAnimal.Death();
-            }*/
         }
     }
 }
