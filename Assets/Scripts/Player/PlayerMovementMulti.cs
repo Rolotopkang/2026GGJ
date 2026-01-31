@@ -43,6 +43,12 @@ public class PlayerMovementMulti : MonoBehaviour
 
     private void Update()
     {
+        if (!CanControl())
+        {
+            _input = Vector2.zero;
+            return;
+        }
+
         Gamepad gamepad = GamepadVibration.GetGamepadByIndex(joystickIndex);
         if (gamepad == null)
         {
@@ -107,8 +113,14 @@ public class PlayerMovementMulti : MonoBehaviour
 
     private void FixedUpdate()
     {
-        if (_rb != null)
-            _rb.velocity = _input * _animal.moveSpeed;
+        if (_rb == null) return;
+        _rb.velocity = CanControl() ? _input * _animal.moveSpeed : Vector2.zero;
+    }
+
+    private bool CanControl()
+    {
+        return Player.GameLoopManager.Inst != null &&
+               Player.GameLoopManager.Inst.currentGameState == Player.GameLoopManager.GameState.Starting;
     }
 
     private void OnDisable()

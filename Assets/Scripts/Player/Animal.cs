@@ -57,6 +57,18 @@ public class Animal : MonoBehaviour
         UpdateWalkingState();
     }
 
+    private void FixedUpdate()
+    {
+        if (!CanMove() && _rb != null)
+            _rb.velocity = Vector2.zero;
+    }
+
+    private bool CanMove()
+    {
+        return GameLoopManager.Inst != null &&
+               GameLoopManager.Inst.currentGameState == GameLoopManager.GameState.Starting;
+    }
+
     private void UpdateWalkingState()
     {
         if (_animator == null) return;
@@ -104,6 +116,7 @@ public class Animal : MonoBehaviour
 
     public virtual bool Attack()
     {
+        if (!CanMove()) return false;
         if (attackCD > 0f && Time.time - _lastAttackTime < attackCD) return false;
         _lastAttackTime = Time.time;
         if (_animator != null)
@@ -116,7 +129,7 @@ public class Animal : MonoBehaviour
     /// </summary>
     public void HitCheck()
     {
-        if (_isDead) return;
+        if (_isDead || !CanMove()) return;
 
         float facing = (animalSprite != null && animalSprite.flipX) ? -1f : 1f;
         Vector2 center = (Vector2)transform.position + Vector2.right * (facing * hitRangeOffset);
@@ -133,17 +146,15 @@ public class Animal : MonoBehaviour
     
     public virtual void UseGrassMagic()
     {
-        if (isplayer && GrassNum>=1)
-        {
-            Debug.Log(name+"烟雾弹");
-            GrassNum--;
-            Instantiate(GrassPrefab, transform.position, quaternion.identity);
-        }
+        if (!CanMove() || !isplayer || GrassNum < 1) return;
+        Debug.Log(name+"烟雾弹");
+        GrassNum--;
+        Instantiate(GrassPrefab, transform.position, quaternion.identity);
     }
 
     public virtual bool DoBehavior1()
     {
-        //if (!isplayer) return false;
+        if (!CanMove()) return false;
         if (behavior1CD > 0f && Time.time - _lastBehavior1Time < behavior1CD) return false;
         _lastBehavior1Time = Time.time;
         Debug.Log(name+"行为1");
@@ -152,7 +163,7 @@ public class Animal : MonoBehaviour
     
     public virtual bool DoBehavior2()
     {
-        if (!isplayer) return false;
+        if (!CanMove() || !isplayer) return false;
         if (behavior2CD > 0f && Time.time - _lastBehavior2Time < behavior2CD) return false;
         _lastBehavior2Time = Time.time;
         Debug.Log(name+"行为2");
