@@ -60,9 +60,11 @@ public class PlayerMovementMulti : MonoBehaviour
             if (!_r2WasPressed)
             {
                 _r2WasPressed = true;
-                _animal.Attack();
-                GamepadVibration.Vibrate(joystickIndex, 0.6f, 0.6f);
-                _vibrateStopTime = Time.time + vibrationDuration;
+                if (_animal.Attack())
+                {
+                    GamepadVibration.Vibrate(joystickIndex, 0.6f, 0.6f);
+                    _vibrateStopTime = Time.time + vibrationDuration;
+                }
             }
         }
         else
