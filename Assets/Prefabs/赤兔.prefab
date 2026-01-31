@@ -708,7 +708,7 @@ MonoBehaviour:
   shitLifetime: 10
   dashHitRangeOffset: 0.5
   dashHitRangeRadius: 1
-  dashImpulseForce: 500
+  dashImpulseForce: 10.06
   dashSpeedMultiplier: 1
   dashDuration: 0.3
 --- !u!114 &-1337287484782630408
