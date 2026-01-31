@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using MoreMountains.Feedbacks;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using Random = UnityEngine.Random;
@@ -13,10 +14,6 @@ namespace Player
         [Header("NPC 生成")]
         [Tooltip("NPC 预制体")]
         public GameObject NPCPrefab;
-        
-        [Header("玩家预制体")]
-        [Tooltip("拖入玩家预制体（需带 PlayerMovementMulti；若有 PlayerMovement 会自动禁用）")]
-        public GameObject playerPrefab;
 
         [Tooltip("生成数量")]
         [Min(1)]
@@ -48,8 +45,8 @@ namespace Player
         private Coroutine _spawnCoroutine;
 
         public GameState currentGameState = GameState.Logo;
-        
-        
+
+        public MMF_Player banner;
         private readonly List<GameObject> _spawnedPlayers = new List<GameObject>();
         
         public enum GameState
@@ -59,6 +56,11 @@ namespace Player
             WaitStart,
             Starting,
             WaitEnd,
+        }
+
+        private void Start()
+        {
+            banner.gameObject.SetActive(false);
         }
 
         private void Update()
@@ -109,9 +111,7 @@ namespace Player
         private IEnumerator SpawnAnimalsCoroutine()
         {
             int npcCount = Mathf.Max(1, spawnCount);
-            // 玩家预制体：优先用本组件上的，否则用 PlayerJoinManager 的
-            GameObject playerPrefabToUse = playerPrefab != null ? playerPrefab : (PlayerJoinManager.Inst != null ? PlayerJoinManager.Inst.playerPrefab : null);
-            int playerCount = (PlayerJoinManager.Inst != null && playerPrefabToUse != null) ? PlayerJoinManager.Inst.JoinedCount : 0;
+            int playerCount = (PlayerJoinManager.Inst != null && NPCPrefab != null) ? PlayerJoinManager.Inst.JoinedCount : 0;
             int totalCount = npcCount + playerCount;
 
             float halfW = spawnRegionSize.x * 0.5f;
@@ -129,9 +129,7 @@ namespace Player
             for (int i = schedule.Count - 1; i > 0; i--)
             {
                 int k = Random.Range(0, i + 1);
-                var tmp = schedule[i];
-                schedule[i] = schedule[k];
-                schedule[k] = tmp;
+                (schedule[i], schedule[k]) = (schedule[k], schedule[i]);
             }
 
             for (int i = 0; i < schedule.Count; i++)
@@ -150,7 +148,7 @@ namespace Player
 
                 if (schedule[i].isPlayer)
                 {
-                    GameObject go = Instantiate(playerPrefabToUse, pos, Quaternion.identity, animalRoot);
+                    GameObject go = Instantiate(NPCPrefab, pos, Quaternion.identity, animalRoot);
                     go.name = "Player_" + schedule[i].joystickIndex;
                     var multi = go.GetComponent<PlayerMovementMulti>();
                     if (multi == null)
@@ -163,8 +161,19 @@ namespace Player
                     Instantiate(NPCPrefab, pos, Quaternion.identity, animalRoot);
                 }
             }
-
             _spawnCoroutine = null;
+            ShowStartingUI();
+        }
+
+        public void ShowStartingUI()
+        {
+            banner.gameObject.SetActive(true);
+        }
+
+        public void OnShowStartingUIEnd()
+        {
+            banner.gameObject.SetActive(false);
+            currentGameState = GameState.Starting;
         }
 
         private Vector2 TryGetNonOverlapPosition(List<Vector2> existing, float halfW, float halfH, float minDistSq)
@@ -200,11 +209,7 @@ namespace Player
                 spawnRegionCenter.x + Random.Range(-halfW, halfW),
                 spawnRegionCenter.y + Random.Range(-halfH, halfH));
         }
-
-        public void OnGenerateFinished()
-        {
-            
-        }
+        
         
 #if UNITY_EDITOR
         private void OnDrawGizmosSelected()
