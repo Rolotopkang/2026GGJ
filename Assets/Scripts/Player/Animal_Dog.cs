@@ -25,13 +25,13 @@ public class Animal_Dog : Animal
 
     public override bool DoBehavior2()
     {
-        GameObject OverlapShit = CheckForPrefabInRange(shitPrefab.name, 3.0f);
+        /*GameObject OverlapShit = CheckForPrefabInRange(shitPrefab.name, 3.0f);
         if (OverlapShit != null)
         {
             // 检测到目标，执行行为
             //消除使，加分
             Destroy(OverlapShit);
-            Debug.Log($"捡到屎了");
+            //Debug.Log($"捡到屎了");
             
             return true;
         }
@@ -40,7 +40,9 @@ public class Animal_Dog : Animal
             // 没有检测到目标，不执行
             Debug.Log("未检测到目标，不执行行为");
             return false;
-        }
+        }*/
+
+        return true;
     }
 
     private void OnCollisionEnter2D(Collision2D other)
