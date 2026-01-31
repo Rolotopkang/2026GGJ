@@ -25,7 +25,7 @@ public class PlayerJoinManager : SingletonMono<PlayerJoinManager>
     {
         // Logo 阶段：已加入玩家重复按确认键 → OnAlreadyJoined
         if (Player.GameLoopManager.Inst != null &&
-            Player.GameLoopManager.Inst.currentGameState == Player.GameLoopManager.GameState.Logo &&
+            Player.GameLoopManager.Inst.currentGameState == Player.GameLoopManager.GameState.PickPlayer &&
             PlayerJoinUI.Inst != null)
         {
             for (int i = 0; i < Gamepad.all.Count; i++)
@@ -47,9 +47,11 @@ public class PlayerJoinManager : SingletonMono<PlayerJoinManager>
             }
         }
 
-        // 未加入玩家按下确认键 → JoinPlayer
+        // 未加入玩家按下确认键 → JoinPlayer（仅在 PickPlayer 阶段处理，避免 Logo 时误登记）
         if (playerPrefab == null) return;
         if (JoinedCount >= MaxPlayers) return;
+        if (Player.GameLoopManager.Inst == null || Player.GameLoopManager.Inst.currentGameState != Player.GameLoopManager.GameState.PickPlayer) return;
+        if (PlayerJoinUI.Inst == null) return;
 
         for (int i = 0; i < Gamepad.all.Count; i++)
         {
@@ -63,7 +65,6 @@ public class PlayerJoinManager : SingletonMono<PlayerJoinManager>
 
             int joystickIndex = GamepadVibration.RegisterJoinedGamepad(g);
             if (joystickIndex == 0) continue;
-
             JoinPlayer(joystickIndex);
             return;
         }

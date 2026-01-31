@@ -22,7 +22,7 @@ public class PlayerJoinUI : SingletonMono<PlayerJoinUI>
 
     private void Update()
     {
-        starthint.SetActive(playerNum>=2);
+        starthint.SetActive(IsReadyToStart);
         
     }
 
@@ -41,4 +41,6 @@ public class PlayerJoinUI : SingletonMono<PlayerJoinUI>
     {
         playerNum--;
     }
+
+    public bool IsReadyToStart => playerNum >= 2;
 }

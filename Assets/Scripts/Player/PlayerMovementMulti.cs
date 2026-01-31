@@ -17,13 +17,6 @@ public class PlayerMovementMulti : MonoBehaviour
     [Range(1f, 20f)]
     public float moveSpeed = 5f;
 
-    [Tooltip("是否使用 Rigidbody2D 移动")]
-    public bool useRigidbody2D = false;
-
-    [Header("R2 扳机与累加器")]
-    [Tooltip("按下 R2 时累加器 +1 并振动当前手柄")]
-    public int accumulator;
-
     [Tooltip("R2 视为按下的阈值（0～1）")]
     [Range(0.2f, 0.9f)]
     public float r2PressThreshold = 0.5f;
@@ -36,18 +29,18 @@ public class PlayerMovementMulti : MonoBehaviour
     private Vector2 _input;
     private bool _r2WasPressed;
     private float _vibrateStopTime = -1f;
+    private Animal _animal;
 
     private void Awake()
     {
-        if (useRigidbody2D)
+        _animal = GetComponent<Animal>();
+        _animal.isplayer = true;
+        _rb = GetComponent<Rigidbody2D>();
+        if (_rb == null)
         {
-            _rb = GetComponent<Rigidbody2D>();
-            if (_rb == null)
-            {
-                _rb = gameObject.AddComponent<Rigidbody2D>();
-                _rb.gravityScale = 0f;
-                _rb.constraints = RigidbodyConstraints2D.FreezeRotation;
-            }
+            _rb = gameObject.AddComponent<Rigidbody2D>();
+            _rb.gravityScale = 0f;
+            _rb.constraints = RigidbodyConstraints2D.FreezeRotation;
         }
     }
 
@@ -70,7 +63,7 @@ public class PlayerMovementMulti : MonoBehaviour
             if (!_r2WasPressed)
             {
                 _r2WasPressed = true;
-                accumulator += 1;
+                _animal.Attack();
                 GamepadVibration.Vibrate(joystickIndex, 0.6f, 0.6f);
                 _vibrateStopTime = Time.time + vibrationDuration;
             }
@@ -80,11 +73,13 @@ public class PlayerMovementMulti : MonoBehaviour
             _r2WasPressed = false;
         }
 
+        if (gamepad.rightShoulder.wasPressedThisFrame)
+        {
+            _animal.UseGrassMagic();
+        }
+
         if (_input.sqrMagnitude > 1f)
             _input.Normalize();
-
-        if (!useRigidbody2D)
-            transform.position += (Vector3)(_input * moveSpeed * Time.deltaTime);
 
         if (_vibrateStopTime > 0f && Time.time >= _vibrateStopTime)
         {
@@ -95,7 +90,7 @@ public class PlayerMovementMulti : MonoBehaviour
 
     private void FixedUpdate()
     {
-        if (useRigidbody2D && _rb != null)
+        if (_rb != null)
             _rb.velocity = _input * moveSpeed;
     }
 

@@ -55,6 +55,7 @@ namespace Player
         public enum GameState
         {
             Logo,
+            PickPlayer,
             WaitStart,
             Starting,
             WaitEnd,
@@ -62,7 +63,8 @@ namespace Player
 
         private void Update()
         {
-            if (currentGameState == GameState.Logo)
+
+            if (currentGameState == GameState.PickPlayer && PlayerJoinUI.Inst.IsReadyToStart)
             {
                 if (Keyboard.current == null) return;
                 if (Keyboard.current[Key.Space].wasPressedThisFrame)

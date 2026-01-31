@@ -11,20 +11,12 @@ namespace Tools
 {
     public class EnumTool
     {
-        public enum PortalGunBulletType
+        public enum AnimalType
         {
-            Bule,
-            Orange,
-        }
-        
-        public enum BoxColor
-        {
-            Blue,
-            Red,
-            Green,
-            LaserBlue,
-            LaserRed,
-            LaserGreen
+            Sheep,
+            Dog,
+            House,
+            
         }
     }
 }
