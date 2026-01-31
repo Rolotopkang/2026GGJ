@@ -12043,7 +12043,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3f7377a1d2f84fc99078d0ff1300b591, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  NPCPrefab: {fileID: 358465220907450538, guid: f71013dbd3166024b80031f1c73a401c, type: 3}
+  NPCPrefab: {fileID: 358465220907450538, guid: 8343ad4976538ba4c90c893687b608d9, type: 3}
   spawnCount: 25
   spawnRegionCenter: {x: 0, y: 0}
   spawnRegionSize: {x: 15.83, y: 8.76}
