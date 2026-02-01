@@ -303,7 +303,7 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls: []
   m_text: "\u2014\u6210\u5458\u5217\u8868\u2014\n\u5343\u9716\uFF1A\u7B56\u5212 \u7F8E\u672F\n\u997C\u5E72\uFF1A\u7B56\u5212
-    \u7A0B\u5E8F\n\u5E9F\u90AE\uFF1A\u7A0B\u5E8F\n\u738B\u4FCA\uFF1A\u7F8E\u672F\n\uFF1A\u7F8E\u672F\n"
+    \u7A0B\u5E8F\n\u5E9F\u90AE\uFF1A\u7A0B\u5E8F\n\u738B\u4FCA\uFF1A\u7F8E\u672F\n\u8463\u5609\u7965\uFF1A\u7F8E\u672F\n"
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: d4069daca5188aa449c2e5793b5b8e4e, type: 2}
   m_sharedMaterial: {fileID: 6746573201480893086, guid: d4069daca5188aa449c2e5793b5b8e4e, type: 2}
