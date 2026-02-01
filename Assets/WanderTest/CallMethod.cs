@@ -39,18 +39,18 @@ namespace WanderingCubes.BehaviorDesigner
         public bool useWeightedRandom = true;
         
         [UnityEngine.Tooltip("要调用的组件名称（如 Animal, PlayerMovementMulti）")]
-        public int RandomNumberSet;
+        public float RandomNumberSet;
 
-        public int RandomNumber;
+        public float RandomNumber;
 
         public override void OnStart()
         {
-            RandomNumber = Random.Range(0, 10);
+            RandomNumber = Random.Range(0, 10.0f);
         }
 
         public override TaskStatus OnUpdate()
         {
-            if (RandomNumber <= RandomNumberSet)
+            if (RandomNumberSet <= RandomNumber)
             {
                 return TaskStatus.Success;    
             }

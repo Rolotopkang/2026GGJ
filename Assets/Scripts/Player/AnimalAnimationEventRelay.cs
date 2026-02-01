@@ -15,4 +15,5 @@ public class AnimalAnimationEventRelay : MonoBehaviour
 
     public void HitCheck() => _animal?.HitCheck();
     public void Attack() => _animal?.Attack();
+    public void KickHitCheck() => _animal?.KickHitCheck();
 }

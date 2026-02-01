@@ -73,6 +73,16 @@ public class PlayerMovementMulti : MonoBehaviour
         else
         {
             _input = Vector2.zero;
+            // WaitEnd 时仅用摇杆控制朝向，不移动
+            if (CanUseAbilities() && !CanMove())
+            {
+                Vector2 stick = gamepad.leftStick.ReadValue();
+                if (_animal.animalSprite != null)
+                {
+                    if (stick.x > 0.2f) _animal.animalSprite.flipX = true;
+                    else if (stick.x < -0.2f) _animal.animalSprite.flipX = false;
+                }
+            }
         }
 
         if (CanUseAbilities())

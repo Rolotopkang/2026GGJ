@@ -70,7 +70,7 @@ public class Animal : MonoBehaviour
                GameLoopManager.Inst.currentGameState == GameLoopManager.GameState.Starting;
     }
 
-    private bool CanUseAbilities()
+    public bool CanUseAbilities()
     {
         if (GameLoopManager.Inst == null) return false;
         var state = GameLoopManager.Inst.currentGameState;
@@ -148,6 +148,11 @@ public class Animal : MonoBehaviour
     }
 
     /// <summary>
+    /// 动画事件可调用。子类可重写（如 Animal_Horse 的踢击）。基类空实现。
+    /// </summary>
+    public virtual void KickHitCheck() { }
+
+    /// <summary>
     /// 动画事件可调用。检测正前方范围内的其他 Animal 并触发其 Death()。仅当自身未死亡时有效。
     /// </summary>
     public void HitCheck()
@@ -183,7 +188,7 @@ public class Animal : MonoBehaviour
         if (!CanUseAbilities()) return false;
         if (behavior1CD > 0f && Time.time - _lastBehavior1Time < behavior1CD) return false;
         _lastBehavior1Time = Time.time;
-        Debug.Log(name+"行为1");
+        //Debug.Log(name+"行为1");
         return true;
     }
     

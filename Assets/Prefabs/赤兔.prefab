@@ -696,21 +696,21 @@ MonoBehaviour:
   hitRangeOffset: -0.59
   hitRangeRadius: 0.5
   attackCD: 5
-  behavior1CD: 0
+  behavior1CD: 6
   behavior2CD: 0
   _lastAttackTime: -3.4028235e+38
   _lastBehavior1Time: -3.4028235e+38
   _lastBehavior2Time: -3.4028235e+38
   _rb: {fileID: 0}
   _isDead: 0
-  ShitMMF: {fileID: 0}
-  shitForce: 0.5
-  shitLifetime: 10
-  dashHitRangeOffset: 0.5
-  dashHitRangeRadius: 1
-  dashImpulseForce: 10.06
-  dashSpeedMultiplier: 1
-  dashDuration: 0.3
+  kickRangeOffset: -0.67
+  kickRangeRadius: 0.55
+  kickSpeedAnimal: 2
+  kickSpeedShit: 8
+  kickAngleRandom: 10
+  kickAnimalScore: 3
+  distancePerScore: 5
+  walkScoreAmount: 1
 --- !u!114 &-1337287484782630408
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -739,7 +739,7 @@ MonoBehaviour:
       parentIndex: 
       startIndex: 
       variableStartIndex: 
-      JSONSerialization: 
+      JSONSerialization: '{"Variables":[{"Type":"BehaviorDesigner.Runtime.SharedVector2","Name":"TargetPos","IsShared":true,"Vector2mValue":"(0,0)"}]}'
       fieldSerializationData:
         typeName: []
         fieldNameHash: 
@@ -748,7 +748,7 @@ MonoBehaviour:
         unityObjects: []
         byteData: 
         byteDataArray: 
-      Version: 
+      Version: 1.7.12
   gizmoViewMode: 2
   showBehaviorDesignerGizmo: 1
 --- !u!1 &490960616198364041
@@ -891,12 +891,12 @@ GameObject:
   - component: {fileID: 251084365991742059}
   - component: {fileID: 7274430448111908680}
   m_Layer: 0
-  m_Name: Mie
+  m_Name: Kick
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!4 &5911982200807939782
 Transform:
   m_ObjectHideFlags: 0
@@ -5735,7 +5735,7 @@ Transform:
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 0.5, y: 0.5, z: 0.5}
+  m_LocalScale: {x: 0.56, y: 0.56, z: 0.56}
   m_ConstrainProportionsScale: 1
   m_Children:
   - {fileID: 1254172892075510884}

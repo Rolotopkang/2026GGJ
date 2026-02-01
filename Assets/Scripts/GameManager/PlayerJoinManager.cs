@@ -89,6 +89,16 @@ public class PlayerJoinManager : SingletonMono<PlayerJoinManager>
     }
 
     /// <summary>
+    /// 指定玩家（1～4）是否已加入。
+    /// </summary>
+    public bool IsPlayerJoined(int playerIndex)
+    {
+        int idx = playerIndex - 1;
+        if (idx < 0 || idx >= MaxPlayers) return false;
+        return _joined[idx];
+    }
+
+    /// <summary>
     /// 重置已加入状态，用于完全重置选人。
     /// </summary>
     public void ResetJoinedState()

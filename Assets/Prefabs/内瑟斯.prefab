@@ -696,7 +696,7 @@ MonoBehaviour:
   hitRangeOffset: -0.65
   hitRangeRadius: 0.48
   attackCD: 5
-  behavior1CD: 2
+  behavior1CD: 1
   behavior2CD: 1
   _lastAttackTime: -3.4028235e+38
   _lastBehavior1Time: -3.4028235e+38
@@ -705,7 +705,8 @@ MonoBehaviour:
   _isDead: 0
   shitPrefab: {fileID: 3470182767891373627, guid: 2613e783ac67d3943a3373896af27964, type: 3}
   ShitMMF: {fileID: 3682486006131141075}
-  BarkScore: 4
+  BarkScore: 1
+  PickShitScore: 3
 --- !u!114 &-1337287484782630408
 MonoBehaviour:
   m_ObjectHideFlags: 0

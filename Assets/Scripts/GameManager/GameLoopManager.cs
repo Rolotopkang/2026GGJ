@@ -73,6 +73,12 @@ namespace Player
         public GameObject EndBanner;
 
         public GameObject GameMap;
+
+        public GameObject HUD;
+
+        [Header("开始游戏音效")]
+        [Tooltip("按下空格开始游戏时播放的音效")]
+        public AudioClip startGameSoundEffect;
         
         private readonly List<GameObject> _spawnedPlayers = new List<GameObject>();
 
@@ -104,6 +110,7 @@ namespace Player
         {
             StartBanner.gameObject.SetActive(false);
             GameMap.SetActive(false);
+            HUD.SetActive(false);
         }
 
         private void Update()
@@ -114,6 +121,8 @@ namespace Player
                 if (Keyboard.current == null) return;
                 if (Keyboard.current[Key.Space].wasPressedThisFrame)
                 {
+                    if (startGameSoundEffect != null && AudioManager.Inst != null)
+                        AudioManager.Inst.PlayOneShot(startGameSoundEffect);
                     TransitionToWaitStart();
                     TransitionController.Inst.PlayBlackTransition(0.3f,
                         () =>
@@ -133,6 +142,8 @@ namespace Player
 
         public void TestStartGame()
         {
+            if (startGameSoundEffect != null && AudioManager.Inst != null)
+                AudioManager.Inst.PlayOneShot(startGameSoundEffect);
             TransitionToWaitStart();
             TransitionController.Inst.PlayBlackTransition(0.3f,()=> PlayerJoinUI.Inst.transform.gameObject.SetActive(false),OnTransitionDown);
         }
@@ -324,6 +335,7 @@ namespace Player
         public void OnShowStartingUIEnd()
         {
             StartBanner.gameObject.SetActive(false);
+            HUD.gameObject.SetActive(true);
             currentGameState = GameState.Starting;
         }
 
@@ -521,6 +533,7 @@ namespace Player
                         PlayerJoinUI.Inst.gameObject.SetActive(true);
                     }
                     GameMap.SetActive(false);
+                    if (HUD != null) HUD.SetActive(false);
                 },
                 () =>
                 {
