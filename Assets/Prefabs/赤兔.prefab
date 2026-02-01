@@ -696,7 +696,7 @@ MonoBehaviour:
   hitRangeOffset: -0.59
   hitRangeRadius: 0.5
   attackCD: 5
-  behavior1CD: 6
+  behavior1CD: 7
   behavior2CD: 0
   _lastAttackTime: -3.4028235e+38
   _lastBehavior1Time: -3.4028235e+38
@@ -708,7 +708,7 @@ MonoBehaviour:
   kickSpeedAnimal: 2
   kickSpeedShit: 8
   kickAngleRandom: 10
-  kickAnimalScore: 3
+  kickAnimalScore: 2
   distancePerScore: 5
   walkScoreAmount: 1
 --- !u!114 &-1337287484782630408

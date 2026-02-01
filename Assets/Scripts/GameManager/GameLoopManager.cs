@@ -129,6 +129,7 @@ namespace Player
                         {
                             PlayerJoinUI.Inst.transform.gameObject.SetActive(false);
                             GameMap.SetActive(true);
+                            HUD.gameObject.SetActive(true);
                         }
                     ,OnTransitionDown);
                 }
@@ -335,7 +336,8 @@ namespace Player
         public void OnShowStartingUIEnd()
         {
             StartBanner.gameObject.SetActive(false);
-            HUD.gameObject.SetActive(true);
+            HUD.transform.GetChild(0).GetComponent<MMF_Player>().PlayFeedbacks();
+            HUD.transform.GetChild(1).GetComponent<MMF_Player>().PlayFeedbacks();
             currentGameState = GameState.Starting;
         }
 
@@ -430,7 +432,11 @@ namespace Player
             _focusTarget = GetCameraFocusTarget(_mainCamera.transform);
             _initialFocusTargetPosition = _focusTarget.position;
             _initialCamOrthoSize = _mainCamera.orthographicSize;
-
+            
+            
+            HUD.transform.GetChild(0).GetComponent<MMF_Player>().RestoreInitialValues();
+            HUD.transform.GetChild(1).GetComponent<MMF_Player>().RestoreInitialValues();
+            if (HUD != null) HUD.SetActive(false);
             if (_focusCoroutine != null)
                 StopCoroutine(_focusCoroutine);
             _focusCoroutine = StartCoroutine(FocusOnWinnerCoroutine(winnerTransform));
@@ -533,7 +539,7 @@ namespace Player
                         PlayerJoinUI.Inst.gameObject.SetActive(true);
                     }
                     GameMap.SetActive(false);
-                    if (HUD != null) HUD.SetActive(false);
+
                 },
                 () =>
                 {

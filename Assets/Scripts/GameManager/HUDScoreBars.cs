@@ -49,6 +49,7 @@ public class HUDScoreBars : MonoBehaviour
             if (_slotTransforms[i] == null) continue;
             bool show = useJoinManager && PlayerJoinManager.Inst.IsPlayerJoined(i + 1);
             _slotTransforms[i].gameObject.SetActive(show);
+            if (show && GameLoopManager.Inst != null) RefreshDeathState(i);
         }
     }
 
@@ -58,9 +59,29 @@ public class HUDScoreBars : MonoBehaviour
         int max = Mathf.Max(1, GameLoopManager.Inst.maxScore);
         for (int i = 0; i < 4 && i < scoreBars.Length; i++)
         {
-            if (scoreBars[i] == null) continue;
-            int score = GameLoopManager.Inst.GetPlayerScore(i + 1);
-            scoreBars[i].fillAmount = Mathf.Clamp01((float)score / max);
+            if (scoreBars[i] != null)
+            {
+                int score = GameLoopManager.Inst.GetPlayerScore(i + 1);
+                scoreBars[i].fillAmount = Mathf.Clamp01((float)score / max);
+            }
+            RefreshDeathState(i);
         }
+    }
+
+    /// <summary>
+    /// 根据玩家死亡状态设置 Slot 的第 3、4 个子物体可见性：第 3 个子物体=存活显示，第 4 个子物体=死亡显示。
+    /// </summary>
+    private void RefreshDeathState(int playerIndex)
+    {
+        if (_slotTransforms == null || playerIndex < 0 || playerIndex >= _slotTransforms.Length) return;
+        var slot = _slotTransforms[playerIndex];
+        if (slot == null || !slot.gameObject.activeSelf) return;
+
+        bool isDead = GameLoopManager.Inst.IsPlayerDead(playerIndex + 1);
+        int childCount = slot.childCount;
+        if (childCount > 2)
+            slot.GetChild(2).gameObject.SetActive(!isDead);
+        if (childCount > 3)
+            slot.GetChild(3).gameObject.SetActive(isDead);
     }
 }
